@@ -26,6 +26,7 @@ python的经典书籍有很多
 
 * [The Hitchhiker’s Guide to Python!](https://docs.python-guide.org/), 主要的作者是非常流行的Python 开源http client库 requests的作者 [Kenneth Reitz](https://github.com/kennethreitz)
 * [learn python the hard way](https://learnpythonthehardway.org/book/)
+* [python for you and me](https://pymbook.readthedocs.io/en/latest/index.htm)作者是python software foundation的director
 
 ## Projects
 
