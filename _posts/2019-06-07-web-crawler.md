@@ -6,7 +6,7 @@ tags:
     - web crawler
     - interview
 ---
-> 本文翻译自GitHub上有关系统设计的repo：[system design primer](https://github.com/donnemartin/system-design-primer)里面关于面试系统设计之短链接，6w+的star，短链接这种系统设计，我想大家都有去了解或者有自己做过类似的系统设计，系统设计关键在于严谨的设计思路和方法论，国外的程序员和国内的程序员有很大的差别，差别在于国外的程序员有很科学的方法论，就好比MBA的教育，在国内是混圈子拿文凭，而国外的MBA教育除了混圈子以外，还教会你一种MBA领域语言和一种科学的方。
+> 本文翻译自GitHub上有关系统设计的repo：[system design primer](https://github.com/donnemartin/system-design-primer)里面关于面试系统设计之短链接，6w+的star。
 
 **Note: 为了避免重复，当前文档直接链接到[系统设计主题](https://github.com/donnemartin/system-design-primer/blob/master/README-zh-Hans.md#系统设计主题的索引)的相关区域，请参考链接内容以获得综合的讨论点、权衡和替代方案。**
 
