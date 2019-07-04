@@ -24,7 +24,7 @@ python的经典书籍有很多
 
 网络教程
 
-* [The Hitchhiker’s Guide to Python!](https://docs.python-guide.org/) 主要的作者是非常流行的 Python 开源 http client 库 requests 的作者 [Kenneth Reitz](https://github.com/kennethreitz)
+* [The Hitchhiker’s Guide to Python!](https://docs.python-guide.org/) 主要的作者是非常流行的 Python 开源 http client 库 [requests](https://github.com/requests/requests) 的作者 [Kenneth Reitz](https://github.com/kennethreitz)
 * [learn python the hard way](https://learnpythonthehardway.org/book/)
 * [python for you and me](https://pymbook.readthedocs.io/en/latest/index.htm) 作者是 python software foundation 的 director
 
@@ -34,7 +34,7 @@ python的经典书籍有很多
 
 * [flask](https://github.com/pallets/flask), 非常优秀的实现了 WSGI 协议的 web framwork。
 * [django](https://github.com/django/django), 非常流行的 Python web framwork, 社区很强大。
-* [tornad](https://github.com/tornadoweb/tornado), 实现了nonblocking 网络I/O实现的 Python 网络库。
+* [tornado](https://github.com/tornadoweb/tornado), 实现了nonblocking 网络I/O实现的 Python 网络库。
 * [requests](https://github.com/requests/requests), python http client 事实上的标准库。
 * [gunicorn](https://github.com/benoitc/gunicorn), 非常强大的 WSGI app container，借鉴于 ruby 的 Unicorn 项目。
 * [sentry](https://github.com/getsentry/sentry), 非常强大的用于问题跟踪的工具。
