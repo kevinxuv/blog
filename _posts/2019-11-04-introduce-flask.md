@@ -1,9 +1,11 @@
 ---
 layout: post
-title: flask 简介
+title: Introduce Flask
 tags: 
     - python
     - web framework
+    - flask
+    - wsgi
 ---
 ![flask](http://flask.palletsprojects.com/en/1.1.x/_images/flask-logo.png)
 
