@@ -128,7 +128,7 @@ class Resource(object):
         raise NotImplementedError
 ```
 
-其中 `to_dict` 方法是 model 序列成 json 需要用到的，因为 rest api 默认使用的网络通信协议是 `http-json`，有了 `Resource` 模型之后，我们可以这样实现 `ResourceView`:
+其中 `to_dict` 方法是 `Resource` 序列化成 json 需要用到的，因为 rest api 默认使用的网络通信协议是 `http-json`，有了 `Resource` 模型之后，我们可以这样实现 `ResourceView`:
 
 ```python
 from werkzeug.exceptions import BadRequest, NotFound
@@ -271,8 +271,7 @@ def get_all_resource_view():
     ]
     resource_views = []
     for resource in resouces:
-        resource_view = ResourceView(resource)
-        resource_view.path = resource.path
+        resource_view = ResourceView(resource, resource.path)
         resource_views.append(resource_view)
     return resource_views
 ```
