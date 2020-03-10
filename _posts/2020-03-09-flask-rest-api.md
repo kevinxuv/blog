@@ -42,16 +42,16 @@ from flask.views import MethodView
 class ResourceView(MethodView):
     path = ''
 
-    def get(self, id=None):
+    def get(self, id):
         raise NotImplementedError
 
     def post(self):
         raise NotImplementedError
 
-    def put(self):
+    def put(self, id):
         raise NotImplementedError
 
-    def delete(self, id=None):
+    def delete(self, id):
         raise NotImplementedError
 ```
 
@@ -59,19 +59,19 @@ class ResourceView(MethodView):
 
 ```python
 def register_restapi(app: Flask):
-    view_func = Resource.as_view(Resource.__name__)
-    path = Resource.path
+    view_func = ResourceView.as_view(Resource.__name__)
+    view_path = ResourceView.path
     app.add_url_rule(
-        path,
+        view_path,
         defaults={'id': None},
         view_func=view_func,
         methods=['GET'])
     app.add_url_rule(
-        path,
+        view_path,
         view_func=view_func,
         methods=['POST'])
     app.add_url_rule(
-        path + '/<int:id>',
+        view_path + '/<int:id>',
         view_func=view_func,
         methods=['GET', 'DELETE', 'PUT'])
 ```
@@ -264,13 +264,13 @@ class PeeweeResource(Resource, Model):
 ```python
 def get_all_resource_view():
     import gc
-    resouces = [
+    resources = [
         kls for kls in gc.get_objects()
         if issubclass(type(kls), type) and issubclass(kls, Resource)
         and kls != Resource and 'Resource' not in kls.__name__
     ]
     resource_views = []
-    for resource in resouces:
+    for resource in resources:
         resource_view = ResourceView(resource, resource.path)
         resource_views.append(resource_view)
     return resource_views
@@ -300,6 +300,15 @@ def register_restapi(app: Flask):
 ```
 
 这样，在 flask 实例化的时候调用这个方法注册一遍路由即可实现将所有的 `Resource` 实现restapi 接口。
+
+# 总结
+
+从上面可以看出，rest api 的设计，需要2个模型：
+
+- `Resource`，需要通过 rest api 暴露出去的资源（可以是数据、缓存、开关等），并实现 rest 约束需要的接口。
+- `ResourceView`，在 http 网关协议层根据 http method 处理 http 请求，实现 rest 定义的约束。
+
+至于在 http 网关协议层用什么 web framework 去处理 http 请求，可以根据自己的项目实际使用到的 web framework 去实现，这样就可以对外暴露出 rest api（或者称为 web service），给外部系统或者端调用，本文作为 flask 实战，自然而然选择了 flask 举例。
 
 # 参考
 
