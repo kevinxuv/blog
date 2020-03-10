@@ -1,5 +1,5 @@
 ---
-title: python at instagram
+title: Python at Instagram
 tags: 
     - python
     - instagram
