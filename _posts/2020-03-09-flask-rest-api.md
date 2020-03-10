@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Rest API Action on Flask
+title: Flask in Action - Rest API Design
 tags: 
     - python
     - flask
