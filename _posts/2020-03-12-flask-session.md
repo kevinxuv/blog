@@ -8,7 +8,7 @@ tags:
 ---
 > 本文是讲述 [flask](https://flask.palletsprojects.com/en/1.1.x/) 的 session 实现以及 session 的原理
 
-![http-session](../assets/images/http-session.gif)
+![http-session](../assets/images/http-session.jpg)
 
 # Http Session
 
@@ -16,11 +16,11 @@ tags:
 
 # Flask Session
 
-[Flask Sessions](https://flask.palletsprojects.com/en/1.1.x/quickstart/#sessions) 的模块的功能就是为了实现 http session，从 `flask.sessions` 的源代码可以看到在 `SecureCookieSessionInterface` 通过 `itsdangerous` 对 session 进行了签名(`save_session`)和反签(`open_session`)，当一个 request 进来之后，cookie 里面如果有 session，就会调用反签的功能，拿到用户信息后存储在 session（这是一个存储在 thread local 里面的一个 dict） 里面，而你的应用可以从这个全局 session 拿到之前登录的时候存储在 sesson 的用户信息，具体实现可以参考 flask 文档里面给的例子。
+[Flask Sessions](https://flask.palletsprojects.com/en/1.1.x/quickstart/#sessions) 的模块的功能就是为了实现 http session，从 `flask.sessions` 的源代码可以看到在 `SecureCookieSessionInterface` 通过 [itsdangerous](https://itsdangerous.palletsprojects.com/en/1.1.x/) 对 session 进行了签名(`save_session`)和反签(`open_session`)，当一个 request 进来之后，cookie 里面如果有 session，就会调用反签的功能，拿到用户信息后存储在 session（这是一个存储在 thread local 里面的一个 dict） 里面，而你的应用可以从这个全局 session 拿到之前登录的时候存储在 sesson 的用户信息，具体实现可以参考 flask 文档里面给的例子。
 
 # 单独实现 session 功能
 
-Flask Sessions 的好处在于，session 不必存储在服务器端，而是在代码里面实现添加和验证，这可以满足大部分对 session 的需求，但是当你有下面的需求时：
+Flask Sessions 的好处在于，session 不必存储在服务端，而是在程序运行时实现添加和验证，这可以满足大部分对 session 的需求，但是当你有下面的需求时：
 
 - 需要知道目前有多少个 session 在打开
 - 需要知道某个用户有多少个 session 在打开
@@ -83,7 +83,7 @@ class User(Model):
 
 class UserSession(Model):
     user_id = IntegerField(null=False, default=0)
-    session_id = CharField(null=False, default='')
+    session_id = CharField(null=False, default='', unique=True)
     is_valid = BooleanField(null=False, default=True)
     created_at = DateTimeField(null=False, default=datetime.now)
     updated_at = DateTimeField(null=False, default=datetime.now)
@@ -137,11 +137,14 @@ def before_request():
     user = get_user_by_session_id(session_id) # 具体实现也不写了
     if not user:
         raise Unauthorized
-    # 鉴权完后可以把 user 存储在 flask session 或 g 中，方便其它接口使用
+    # 鉴权完后可以把 user 存储在 flask session 或 g 中，方便在其它地方使用
 ```
+
+对于过期的 session，可以通过一个定时任务去做清理。
 
 # 参考
 
 - [http](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol)
 - [session](https://en.wikipedia.org/wiki/Session_(computer_science))
+- [Flask Sessions](https://flask.palletsprojects.com/en/1.1.x/quickstart/#sessions)
 - [peewee orm](http://docs.peewee-orm.com/en/latest/)
