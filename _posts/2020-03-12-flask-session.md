@@ -18,7 +18,7 @@ tags:
 
 [Flask Sessions](https://flask.palletsprojects.com/en/1.1.x/quickstart/#sessions) 的模块的功能就是为了实现 http session，从 `flask.sessions` 的源代码可以看到在 `SecureCookieSessionInterface` 通过 [itsdangerous](https://itsdangerous.palletsprojects.com/en/1.1.x/) 对 session 进行了签名(`save_session`)和反签(`open_session`)，当一个 request 进来之后，cookie 里面如果有 session，就会调用反签的功能，拿到用户信息后存储在 session（这是一个存储在 thread local 里面的一个 dict） 里面，而你的应用可以从这个全局 session 拿到之前登录的时候存储在 sesson 的用户信息，具体实现可以参考 flask 文档里面给的例子。
 
-# 单独实现 session 功能
+# 单独实现 session 管理功能
 
 Flask Sessions 的好处在于，session 不必存储在服务端，而是在程序运行时实现添加和验证，这可以满足大部分对 session 的需求，但是当你有下面的需求时：
 
@@ -29,10 +29,10 @@ Flask Sessions 的好处在于，session 不必存储在服务端，而是在程
 - 踢掉一个指定的 session
 - session 需要单独成为一个服务或者提供接口供其它服务鉴权（也可以说是拿到用户信息）
 
-这时候就发现 Flask 自带的 Sessions 实现无法满足你的需求，当需要满足上面的需求时，session 就不得不存储在服务端里面，如果存储在服务端里面，那就只需要用到 cookie 的存储功能，而 cookie 的失效日期可以设置称一个固定的时间，比如：一年的有效时间 = 当前时间 + 365 天，同时你需要考虑：
+这时候就发现 Flask 自带的 Sessions 实现无法满足你的需求，当需要满足上面的需求时，session 就不得不存储在服务端，如果存储在服务端，那就只需要用到 cookie 的存储功能，而 cookie 的失效日期可以设置称一个固定的时间，比如：一年的有效时间 = 当前时间 + 365 天，同时你需要考虑：
 
 - session 要存储哪些数据，也就是 session 实体模型是什么
-- session 怎么存储，存储在关系型数据库里面，还是 k/v 数据库里面
+- session 怎么存储，存储在关系型数据库里面，还是 k/v 数据库里面，还是对象存储
 
 很显然需要满足上面的需求，最合适的还是存储在关系型数据库里面，而 session 的实体模型可以这样设计：
 
@@ -53,10 +53,10 @@ class UserSession(object):
 
 - 通过查询 `UserSession` 中 `is_valid = True` 的记录数即可知道有多少 session
 - 通过根据用户的 `user_id` 查询 `UserSession` 当中这个用户的记录数即可知道固定用户的 session
-- 通过查询用户固定的 session 记录的 `created_at` 知道这个用户是什么时候登录的
+- 通过查询用户固定的 `session_id` 记录的 `created_at` 知道这个用户是什么时候登录的
 - 如果需要支持单点登录，只需要当用户登录时，即创建 UserSession 时，把该用户其它的 UserSession 更改成 `is_valid = False`，这样当其它端通过无效的 session 请求时，会被要求重新登录
 - 踢掉一个用户的一个 session，就是把那条记录更改成 `is_valid = False`
-- 本身在存储上面就单独存储，就可以通过解藕出用户服务提供session功能
+- 本身在存储上面就单独存储，就可以通过解藕出用户服务提供 session 功能
 
 而接下来就要考虑 `session_id` 值怎么生成，这个值就是用来鉴权的，可以不用跟 flask sessions 里面实现的一样，正常的签名即可，比如：
 
@@ -65,7 +65,7 @@ import hashlib
 session_id = hashlib.md5('{secret_key}{username}{timestamp}{secret_key}'.format(secrey_key='', username='', timestamp='').encode('utf-8')) # username 需要在 user model 里面是唯一的
 ```
 
-这样 `UserSession` model 可以这样实现，这里用 [peewee orm](http://docs.peewee-orm.com/en/latest/) 举例：
+这样 `UserSession` 模型可以这样实现，这里用 [peewee orm](http://docs.peewee-orm.com/en/latest/) 举例：
 
 ```python
 import hashlib
