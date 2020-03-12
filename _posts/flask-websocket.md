@@ -1,8 +1,8 @@
 ---
 layout: post
-title: Flask in Action - Session
+title: Flask in Action - Websocket
 tags: 
     - python
     - flask
-    - http session
+    - websocket
 ---
