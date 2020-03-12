@@ -8,6 +8,8 @@ tags:
 ---
 > 本文是讲述 [flask](https://flask.palletsprojects.com/en/1.1.x/) 的 session 实现以及 session 的原理
 
+![http-session](../assets/images/http-session.gif)
+
 # Http Session
 
 [Http](https://en.wikipedia.org/wiki/Hypertext_Transfer_Protocol) 协议被广泛的用于 B/S or C/S 结构中端跟服务器之间通信，众所周知 `Http` 是一种[无状态协议](https://en.wikipedia.org/wiki/Stateless_protocol)，当用户通过客户端/浏览器调用服务端接口登录后，用户再次调用服务端接口时，这2个请求是隔离的（isolated），这时候为了避免要求重复登录并保持会话，但是请求又保持独立，就需要存储用户鉴权信息在客户端/浏览器端，这就有了 [Session](https://en.wikipedia.org/wiki/Session_(computer_science)) ，一般 session 会存储在 [http cookie](https://en.wikipedia.org/wiki/HTTP_cookie) 里面，而 cookie 本身设计就是为了存储一些有状态的信息，它会跟域名绑定并保留在 http client 中，后续用户的每次请求都会带上，所以通常 session 的实现就是在用户第一次调登录接口后，由后端设置在 response 的 cookie 里面，随着 response 的返回而设置进端的 cookie 里面，后续所有的请求服务端均会通过 cookie 里面的 session 去做用户的鉴权，而 session 的 cookie 名称以及值，可以自定义，一般这个值是通过一个签名算法加密的，服务端只要进行反签就可以拿到签名之前存储在 session 的用户信息，根据这个用户信息做鉴权。
