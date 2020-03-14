@@ -16,7 +16,7 @@ tags:
 
 # Flask Session
 
-[Flask Sessions](https://flask.palletsprojects.com/en/1.1.x/quickstart/#sessions) 的模块的功能就是为了实现 http session，从 `flask.sessions` 的源代码可以看到在 `SecureCookieSessionInterface` 通过 [itsdangerous](https://itsdangerous.palletsprojects.com/en/1.1.x/) 对 session 进行了签名(`save_session`)和反签(`open_session`)，当一个 request 进来之后，cookie 里面如果有 session，就会调用反签的功能，拿到用户信息后存储在 session（这是一个存储在 thread local 里面的一个 dict） 里面，而你的应用可以从这个全局 session 拿到之前登录的时候存储在 sesson 的用户信息，具体实现可以参考 flask 文档里面给的例子。
+[Flask Sessions](https://flask.palletsprojects.com/en/1.1.x/quickstart/#sessions) 模块的功能就是为了实现 http session，从 `flask.sessions` 的源代码可以看到在 `SecureCookieSessionInterface` 通过 [itsdangerous](https://itsdangerous.palletsprojects.com/en/1.1.x/) 对 session 进行了签名(`save_session`)和反签(`open_session`)，当一个 request 进来之后，cookie 里面如果有 session，就会调用反签的功能，拿到用户信息后存储在 session（这是一个存储在 thread local 里面的一个 dict） 里面，而你的应用可以从这个全局 session 拿到之前登录的时候存储在 sesson 的用户信息，具体实现可以参考 flask 文档里面给的例子。
 
 # 单独实现 session 管理功能
 

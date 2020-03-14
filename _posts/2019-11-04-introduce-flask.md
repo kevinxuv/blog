@@ -69,4 +69,8 @@ Armin 在 [2016 SF python](https://www.youtube.com/watch?v=1ByQhAM5c1I&t=330s) �
 
 # 最后
 
-flask 是一个已经被很多公司应用到生产环境的架构，正是由于它给开发者带来的方便和稳定，才促使它成为一个拥有4w+ star 的流行框架。
+flask 是一个已经被很多公司应用到生产环境的架构，正是由于它给开发者带来的方便和稳定，才促使它成为一个拥有4w+ star 的流行框架，另外如果更多的想了解 flask 的设计思想可以关注 Armin 的社交以及油管视频：
+
+- [github](https://github.com/mitsuhiko)
+- [blog](https://lucumr.pocoo.org/)
+- [youtube](https://www.youtube.com/channel/UC-mexo-76-J1MlQM8NkWCYw)
