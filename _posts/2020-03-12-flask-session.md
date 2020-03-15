@@ -75,7 +75,7 @@ from peewee import *
 from playhoues.signals import pre_save, Model
 
 class User(Model):
-    username = CharField(null=False, default='')
+    username = CharField(null=False, default='', unique=True)
     password = CharField(null=False, default='')
 
     def to_dict(self):
@@ -113,9 +113,9 @@ app.secret_key = '' # 可以参考 flask 文档生成，一般从配置中读
 @app.route('/login', methods=['POST'])
 def login():
     user = user_login(**request.get_json()) # 具体实现代码就不写了
-    session = UserSession.create(username=user.username)
+    user_session = UserSession.create(username=user.username)
     response = jsonify(user.to_dict())
-    response.set_cookie('session_id', session.session_id)
+    response.set_cookie('session_id', user_session.session_id)
     return response
 
 
@@ -138,6 +138,7 @@ def before_request():
     if not user:
         raise Unauthorized
     # 鉴权完后可以把 user 存储在 flask session 或 g 中，方便在其它地方使用
+    session['user'] = user.to_dict()
 ```
 
 对于过期的 session，可以通过一个定时任务去做清理。
