@@ -12,7 +12,7 @@ tags:
 
 # 通过并发加速你的 python 程序
 
-![python-concurrency](../assets/images/Concurrency-In-Python.jpg)
+![python-concurrency](../assets/images/Concurrency-In-Python.png)
 
 > 本文翻译至 `realpython` 上题为 [Speed Up Your Python Program With Concurrency](https://realpython.com/python-concurrency/) 的教程，教程对怎么利用并发加速 python 程序分析非常全面到位。
 
