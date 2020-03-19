@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Speed Up Your Python Program With Concurrency
+title: Concurrency in Python
 tags: 
     - python
     - concurrency
