@@ -10,13 +10,11 @@ tags:
     - asyncio
 ---
 
-# 通过并发加速你的 python 程序
-
-![python-concurrency](../assets/images/Concurrency-In-Python.png)
+![python-concurrency](../assets/images/concurrency-in-python.png)
 
 > 本文翻译至 `realpython` 上题为 [Speed Up Your Python Program With Concurrency](https://realpython.com/python-concurrency/) 的教程，教程对怎么利用并发加速 python 程序分析非常全面到位。
 
-## 什么是并发（concurrency）？
+# 什么是并发（concurrency）？
 
 从字典定义上讲，并发（concurrency）就是同时发生，在 python 语言里面，这些同时发生的事物被不同命名（thread、task、process），但是站在一个高层级（high level）上看，他们都指的是一系列按照顺序执行的指令。
 
@@ -34,7 +32,7 @@ tags:
 
 预先进行此额外工作的好处是，您始终知道任务将在哪里调出。 除非标记了该语句，否则它不会在 Python 语句中间交换出来。 稍后您将看到这如何简化设计的各个部分。
 
-## 什么是并行（Parallelism）?
+# 什么是并行（Parallelism）?
 
 到目前为止，您已经研究了在单个处理器上发生的并发。酷炫的新笔记本电脑拥有的所有这些 CPU 核心如何？您如何利用它们？ `multiprocessing` 就是答案。
 
@@ -50,7 +48,7 @@ tags:
 | 协作式多任务（asyncio）   | 这些任务自己决定何时放弃控制权。       | 1      |
 | 多进程（Multiprocessing） | 所有进程都在不同的处理器上同时运行。   | 许多   |
 
-## 什么时候并发有用
+# 什么时候并发有用
 
 并发可以对两种类型的问题产生很大的影响，这些通常称为:
 
@@ -84,11 +82,11 @@ tags:
 
 接下来您将首先看到 I/O 约束程序。然后您将看到一些处理与 CPU 约束的程序的代码。
 
-## 怎么加速一个 I/O 约束的程序
+# 怎么加速一个 I/O 约束的程序
 
 让我们从关注 I/O 约束程序和一个常见问题开始：通过网络下载内容。 对于我们的示例，您将从几个站点下载网页，但实际上可能是任何网络流量。 可视化和设置网页更加容易。
 
-### Synchronous 版本
+## Synchronous 版本
 
 我们将从该任务的非并行版本开始。 请注意，此程序需要 [requests](http://docs.python-requests.org/en/master/) 模块。 您应该在运行它之前用 pip 安装好 requests 模块，可以使用 [virtualenv](https://realpython.com/python-virtual-environments-a-primer/)。 此版本完全不使用并发：
 
@@ -129,11 +127,11 @@ if __name__ == "__main__":
 
 > **_注意:_** 网络流量取决于许多因素，这些因素可能会每秒变化。 我已经看到由于网络问题，这些测试的次数从一次运行到另一次运行翻了一番。
 
-#### 同步版本优点
+### 同步版本优点
 
 这个版本的代码最棒的是: 很容易。 编写和调试相对容易。 考虑起来也更加简单明了。 贯穿其中只有一条思路，因此您可以预测下一步是什么以及其行为方式。
 
-#### 同步版本存在的问题
+### 同步版本存在的问题
 
 这里最大的问题是，与我们将提供的其他解决方案相比，它相对较慢。这是最终输出在我的计算机上给出的示例：
 
@@ -149,7 +147,7 @@ Downloaded 160 in 14.289619207382202 seconds
 
 如果您的程序经常运行该怎么办？ 如果要花几个小时运行怎么办？ 让我们继续进行并发，方法是使用线程重写此程序。
 
-### threading 版本
+## threading 版本
 
 您可能已经猜到了，编写线程程序会花费更多的精力。 但是，对于简单的案例，您花费很少的额外精力可能会感到惊讶。 这是带有线程的相同程序的外观：
 
@@ -233,7 +231,7 @@ def get_session():
 
 此处的难题是，正确的线程数并不是一项任务到另一项任务的常数。需要一些实验。
 
-#### 线程版本的优点
+### threading 版本的优点
 
 它很快！这是我测试的最快速度。请记住，非并行版本花费了超过14秒的时间：
 
@@ -249,7 +247,7 @@ Downloaded 160 in 3.7238826751708984 seconds
 
 它使用多个线程来同时向网站发出多个打开的请求，从而使您的程序可以重叠等待时间并更快地获得最终结果！ 对的！那是目标。
 
-#### 线程版本的问题
+### threading 版本的问题
 
 然而，正如您从示例中看到的那样，这需要花费更多的代码才能实现，并且您实际上必须考虑一下线程之间共享的数据。
 
@@ -261,7 +259,7 @@ Downloaded 160 in 3.7238826751708984 seconds
 
 在深入研究 `asyncio` 示例代码之前，让我们先详细介绍一下 `asyncio` 的工作原理。
 
-#### asyncio 基础
+### asyncio 基础
 
 这将是 `asyncio` 的简化版本。这里掩盖了许多细节，但仍然传达了其工作原理的想法。
 
@@ -279,7 +277,7 @@ Downloaded 160 in 3.7238826751708984 seconds
 
 这是 `asyncio` 发生情况的高级视图。如果您想了解更多细节，如果您想更深入地了解，这个 [StackOverflow](https://stackoverflow.com/a/51116910/6843734) 答案提供了一些很好的细节。
 
-#### async and await
+### async and await
 
 现在，我们来谈谈添加到Python中的两个新关键字：`async` 和 `await`。根据上面的讨论，您可以将 `await` 看作是一种魔术，它使任务可以将控制权交还给事件循环。当您的代码等待函数调用时，这表明该调用可能要花一些时间，并且该任务应该放弃控制。
 
@@ -289,7 +287,7 @@ Downloaded 160 in 3.7238826751708984 seconds
 
 您一定可以想象，管理事件循环和任务之间的交互会有些复杂。对于刚开始使用 `asyncio` 的开发人员来说，这些细节并不重要，但是您需要记住，任何调用 `await` 的函数都必须标记为 `async`。否则，您会收到语法错误。
 
-#### 回到代码
+### 回到代码
 
 现在，您已经对什么是 `asyncio` 有了基本的了解，让我们看一下示例代码的 `asyncio` 版本，并弄清楚它是如何工作的。 请注意，此版本添加了 [aiohttp](https://aiohttp.readthedocs.io/en/stable/)。 您应先运行 `pip install aiohttp`，然后再运行它：
 
@@ -326,11 +324,11 @@ if __name__ == "__main__":
 
 这个版本比前两个版本复杂一些。 它具有类似的结构，但是设置任务要比创建 `ThreadPoolExecutor` 多得多。 让我们从示例顶部开始。
 
-#### download_site()
+### download_site()
 
 顶部的 `download_site()` 与线程版本几乎完全相同，但函数定义行上的 `async` 关键字和实际调用 `session.get()` 时的 `async with` 关键字除外。 稍后您将看到为什么可以在此处传递 `Session` 而不使用 `thread-local` 存储的原因。
 
-#### download_all_sites()
+### download_all_sites()
 
 `download_all_sites()` 是您从线程示例中看到的最大变化。
 
@@ -344,13 +342,13 @@ if __name__ == "__main__":
 
 `asyncio` 的很酷的优点之一是它的伸缩性远胜于线程。与线程相比，每个任务花费的资源更少，创建时间也更少，因此创建和运行更多任务的效果很好。这个例子只是为每个站点创建一个单独的任务供下载，效果很好。
 
-#### __main__
+### `__main__`
 
 最后，`asyncio` 的性质意味着您必须启动事件循环并告诉它要运行哪些任务。 文件底部的 `__main__` 部分包含 `get_event_loop()` 和 `run_until_complete()` 的代码。 如果没有别的，他们在命名这些功能方面做得很好。
 
 如果您已更新至 `Python 3.7`，则 `Python` 核心开发人员会为您简化此语法。 可以使用 `asyncio.run()` 代替 `asyncio`. `get_event_loop()` 。`run_until_complete()` 绕口令。
 
-#### asyncio 版本的优点
+### asyncio 版本的优点
 
 真的很快！在我的机器上的测试中，这是最快的代码版本：
 
@@ -370,7 +368,7 @@ Downloaded 160 in 2.5727896690368652 seconds
 
 伸缩问题在这里也很明显。在一个线程上用 `threading` 示例去获取每个站点是明显比使用少数线程运行它更慢。运行带有数百个任务的 `asyncio` 示例并不会降低它的运行速度。
 
-#### asyncio 版本的问题
+### asyncio 版本的问题
 
 此时，`asyncio` 存在几个问题。您需要特殊的异步版本的库才能充分利用 `asyncio`。如果您只是使用请求来下载网站，则速度会慢得多，因为请求并非旨在通知事件循环其已被阻止。随着时间的流逝，这个问题越来越小，越来越多的库开始采用异步技术。
 
@@ -378,7 +376,7 @@ Downloaded 160 in 2.5727896690368652 seconds
 
 考虑到这一点，让我们着手采用根本不同的并发： `multiprocessing`。
 
-### multiprocessing 版本
+## multiprocessing 版本
 
 与以前的方法不同，`multiprocessing` 版本可以充分利用您的全新酷炫计算机具有的多个 CPU。 或者，就我而言，那是我笨拙的旧笔记本电脑。 让我们从代码开始：
 
@@ -420,7 +418,7 @@ if __name__ == "__main__":
 
 它比 `asyncio` 示例要短得多，并且实际上看起来与线程示例非常相似，但是在深入研究代码之前，让我们快速浏览一下 `multiprocessing` 为您提供的功能。
 
-#### multiprocessing 总结
+### multiprocessing 总结
 
 到目前为止，本文中的所有并发示例仅在计算机上的单个 CPU 或内核上运行。这样做的原因与 `CPython` 的当前设计以及称为全局解释器锁（GIL）的东西有关。
 
@@ -430,7 +428,7 @@ if __name__ == "__main__":
 
 可以想象，建立一个单独的 `Python` 解释器并不像在当前的 `Python` 解释器中启动新线程那样快。这是一项重量级的操作，并且有一些限制和困难，但是对于正确的问题，它可以带来很大的不同。
 
-####  multiprocessing 代码
+### multiprocessing 代码
 
 该代码与我们的 `synchronous` 版本相比有一些小的变化。第一个在 `download_all_sites()`中。它创建一个 `multiprocessing.Pool` 对象，并将 `download_site` `.map` 到可迭代的站点，而不是简单地反复调用 `download_site()`。从线程示例中应该看起来很熟悉。
 
@@ -446,13 +444,13 @@ if __name__ == "__main__":
 
 这就是全部。其余代码与您之前所见非常相似。
 
-#### multiprocessing 版本的优点
+### multiprocessing 版本的优点
 
 此示例的 `multiprocessing` 版本很棒，因为它相对容易设置，并且几乎不需要任何额外的代码。它还充分利用了计算机中的 CPU 功能。该代码的执行时序图如下所示：
 
 ![multiprocessing](../assets/images/MProc.png)
 
-#### multiprocessing 版本的问题
+### multiprocessing 版本的问题
 
 此版本的示例确实需要一些额外的设置，并且全局 `session` 对象很奇怪。您必须花一些时间考虑在每个过程中将访问哪些变量。
 
@@ -466,7 +464,7 @@ Downloaded 160 in 5.718175172805786 seconds
 
 这不足为奇，因为与 I/O 约束的问题并不是 `multiprocessing` 真正存在的原因。进入下一部分，你将看到更多受 CPU 限制的示例。
 
-## 怎么加速一个 CPU 约束程序
+# 怎么加速一个 CPU 约束程序
 
 让我们在这里换档。 到目前为止，所有示例都处理了与 I/O 约束的问题。 现在，您将研究 CPU 受限的问题。 如您所见，一个受 I/O 约束的问题花费了大部分时间来等待外部操作（如网络调用）完成。 另一方面，受 CPU 限制的问题很少执行 I/O 操作，其总体执行时间是可以处理所需数据的速度的一个因素。
 
@@ -479,7 +477,7 @@ def cpu_bound(number):
 
 您将传递大量的数字，因此需要一段时间。 请记住，这只是您的代码的占位符，它实际上在做有用的事情，并且需要大量的处理时间，例如计算方程式的根或对大型数据结构进行排序。
 
-### Synchronous 版本
+## Synchronous 版本
 
 现在让我们看一下该示例的非并行版本：
 
@@ -518,7 +516,7 @@ Duration 7.834432125091553 seconds
 
 显然，我们可以做得更好。所有这些都在没有并发的单个CPU上运行。让我们看看如何做才能更好。
 
-### threading 和 asyncio 版本
+## threading 和 asyncio 版本
 
 您认为使用线程或asyncio重写此代码将加快多少速度？
 
@@ -535,7 +533,7 @@ Duration 10.407078266143799 seconds
 
 我已经编写了该代码的线程版本，并将其与其他示例代码一起放置在 [GitHub repo](https://github.com/realpython/materials/tree/master/concurrency-overview) 中，以便您可以自己进行测试。但是我们现在不看。
 
-### multiprocessing 版本
+## multiprocessing 版本
 
 现在您终于到达了真正意义上的 multiprocessing 的地方。与其他并发库不同， multiprocessing 被明确设计为在多个 CPU 之间共享繁重的 CPU 工作负载。它的执行时序图如下所示：
 
@@ -574,7 +572,7 @@ if __name__ == "__main__":
 
 而且，正如我们在第一部分中关于线程的提到的那样，`multiprocessing.Pool` 代码是建立在诸如 `Queue` 和 `Semaphore` 之类的构建块上的，这些人对使用其他语言完成多线程和 multiprocessing 代码的人很熟悉。
 
-####  multiprocessing 版本的优点
+### multiprocessing 版本的优点
 
 此示例的 `multiprocessing` 版本很棒，因为它相对容易设置，并且几乎不需要任何额外的代码。 它还充分利用了计算机中的 CPU 功能。
 
@@ -587,14 +585,13 @@ Duration 2.5175397396087646 seconds
 
 这比我们在其他选项中看到的要好得多。
 
-#### multiprocessing 版本的问题
+### multiprocessing 版本的问题
 
 使用 `multiprocessing` 有一些缺点。 在这个简单的示例中并没有真正显示它们，但是有时很难将问题分解成每个处理器可以独立工作。
 
 同样，许多解决方案要求流程之间进行更多的交流。 这会给您的解决方案增加一些复杂性，从而使非并行程序无需处理。
 
-
-## 什么时候使用并发
+# 什么时候使用并发
 
 您已经在此处看到了很多介绍，因此让我们回顾一些关键思想，然后讨论一些决策点，这些决策点将帮助您确定要在项目中使用哪个并发模块（如果有）。
 
@@ -608,7 +605,7 @@ Duration 2.5175397396087646 seconds
 
 对于受 I/O 约束的问题，Python 社区中有一条通用的经验法则："能使用 `asyncio` 的时候 `asyncio`，必须使用 `threading` 的时候使用 `threading` ",  `asyncio` 可以为此类程序提供最快的速度，但是有时您会需要尚未移植的关键库以利用 `asyncio`。请记住，任何不放弃对事件循环的控制的任务都将阻止所有其他任务。
 
-## 结论
+# 结论
 
 现在，您已经了解了Python中可用的基本并发类型：
 
