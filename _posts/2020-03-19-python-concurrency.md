@@ -235,7 +235,7 @@ def get_session():
 
 它很快！这是我测试的最快速度。请记住，非并行版本花费了超过14秒的时间：
 
-```shell script
+```shell
 $ ./io_threading.py
    [most output skipped]
 Downloaded 160 in 3.7238826751708984 seconds
