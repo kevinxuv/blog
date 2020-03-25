@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Introduce Flask
+title: Introduction to Flask
 tags: 
     - python
     - web framework

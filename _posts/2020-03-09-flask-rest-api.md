@@ -138,9 +138,8 @@ from flask.views import MethodView
 
 class ResourceView(MethodView):
 
-    def __init__(self, resource: Resource, path: str):
+    def __init__(self, resource: Resource):
         self.resource = resource
-        self.path = path
 
     def get(self, id):
         if id is not None:
@@ -210,7 +209,6 @@ from playhouse.shortcuts import model_to_dict
 
 
 class PeeweeResource(Resource, Model):
-    path = ''
 
     def to_dict(self):
         return model_to_dict(self)
@@ -262,17 +260,18 @@ class PeeweeResource(Resource, Model):
 这样看起来只需要实现 `Resource`， 就可以开出 rest api，这时候可以这样做：
 
 ```python
-def get_all_resource_view():
+def get_all_resource_views():
     import gc
     resources = [
         kls for kls in gc.get_objects()
         if issubclass(type(kls), type) and issubclass(kls, Resource)
         and kls != Resource and 'Resource' not in kls.__name__
     ]
-    resource_views = []
+    resource_views = {}
     for resource in resources:
-        resource_view = ResourceView(resource, resource.path)
-        resource_views.append(resource_view)
+        resource_name = resource.__name__.lower()
+        resource_view = ResourceView.as_view('{}_api'.format(resource_name), resource)
+        resource_views['/{}s'.format(resource_name)] = resource_view
     return resource_views
 ```
 
@@ -280,10 +279,8 @@ def get_all_resource_view():
 
 ```python
 def register_restapi(app: Flask):
-    resource_views = get_all_resource_view()
-    for resource_view in resource_views:
-        view_func = resource_view.as_view(resource.__name__)
-        path = resource_view.path
+    resource_views = get_all_resource_views()
+    for path, view_func in resource_views.items():
         app.add_url_rule(
             path,
             defaults={'id': None},
