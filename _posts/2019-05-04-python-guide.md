@@ -32,6 +32,7 @@ python的经典书籍有很多
 
 网络教程
 
+- [geeksforgeeks python tutorials](https://www.geeksforgeeks.org/python-programming-language/) 强烈推荐 `geek for geek` 的 `python` 教程， 非常全面。
 - [The Hitchhiker’s Guide to Python!](https://docs.python-guide.org/) 主要的作者是非常流行的 Python 开源 http client 库 [requests](https://github.com/requests/requests) 的作者 [Kenneth Reitz](https://github.com/kennethreitz)
 - [learn python the hard way](https://learnpythonthehardway.org/book/)
 - [python for you and me](https://pymbook.readthedocs.io/en/latest/) 作者 [Kushal Das](https://github.com/kushaldas) 是 python software foundation 的 director
