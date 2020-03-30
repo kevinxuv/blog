@@ -2,7 +2,6 @@
 layout: post
 title: A Journey to Python
 tags: 
-    - python
+    - python guide
 ---
 # Python 之旅
-
