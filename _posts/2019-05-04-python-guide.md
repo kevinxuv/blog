@@ -10,7 +10,7 @@ tags:
 
 ## 特性
 
-- 高级语言（当然是相对与汇编这种更加底层的语言来说）
+- 高级语言（当然是相对于汇编这种更加底层的语言来说）
 - 面向对象
 - 函数式编程
 - 强大的社区以及丰富的开源库
@@ -43,7 +43,7 @@ tags:
 - 饿了么
 - 知乎
 
-这里没有列一些巨大厂（比如：国外的 FLAG, 国内的 BAT），因为对这些巨大厂来讲，语言不会是阻碍其发展的因素，而且其中大部分不以 `python` 为主要语言（比如：Facebook - PHP，Google - Java， Amazon - Java，腾讯和百度 - C/C++，阿里 - Java），列出来的都是以 `python` 作为主要开发语言的公司，`Youtube` 最早就是用 `python` 开发的，不过 `YouTube` 在被 `Google` 收购后，现在已经开始在用 `Go` 重写，`Dropbox`最为 [Guido](https://en.wikipedia.org/wiki/Guido_van_Rossum) 退休公司，现在也在用 `rust`, `Go` 重写部分项目，`Netflix` 也是一个巨大厂级别的公司，从 `Netflix` GitHub 上开源的项目以及技术博客看它使用的大多数语言是：Java、python、Go等，国内豆瓣和知乎是以 `Python` 作为主要开发语言，不过豆瓣也在用 `GO` 重写部分项目，饿了么在被阿里收购前后，就在迁移到 `Java` 上面。
+这里没有列一些巨大厂（比如：国外的 FLAG, 国内的 BAT），因为对这些巨大厂来讲，语言不会是阻碍其发展的因素，而且其中大部分不以 `python` 为主要语言（比如：Facebook - PHP，Google - Java， Amazon - Java，腾讯和百度 - C/C++，阿里 - Java），列出来的都是以 `python` 作为主要开发语言的公司，`Youtube` 最早就是用 `python` 开发的，不过 `YouTube` 在被 `Google` 收购后，现在已经开始在用 `Go` 重写，`Dropbox`作为 [Guido](https://en.wikipedia.org/wiki/Guido_van_Rossum) 退休公司，现在也在用 `rust`, `Go` 重写部分项目，`Netflix` 也是一个巨大厂级别的公司，从 `Netflix` GitHub 上开源的项目以及技术博客看它使用的大多数语言是：Java、python、Go等，国内豆瓣和知乎是以 `Python` 作为主要开发语言，不过豆瓣也在用 `GO` 重写部分项目，饿了么在被阿里收购前后，就在迁移到 `Java` 上面。
 
 ## Books
 
