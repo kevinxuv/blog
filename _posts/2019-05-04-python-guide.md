@@ -16,6 +16,35 @@ tags:
 - 强大的社区以及丰富的开源库
 - 动态语言
 
+## 应用
+
+我们可以用 `python` 做很多事情，比如：
+
+- 网络开发（ [Django](https://www.djangoproject.com/), [Flask](https://flask.palletsprojects.com/en/1.1.x/)）
+- 机器学习（ [Tensorflow](https://www.tensorflow.org/), [PyTorch](https://pytorch.org/)）
+- 科学计算 ( [numpy](https://numpy.org/), [pandas](https://pandas.pydata.org/) )
+- GUI编程（ [PyQt](https://www.riverbankcomputing.com/software/pyqt/intro), [Tkinter](https://docs.python.org/3/library/tkinter.html), [Kivy](https://kivy.org/) ）
+- 网络爬虫 ( [Scrapy](https://scrapy.org/), [Selenium](https://selenium-python.readthedocs.io/) )
+
+是的，跟其它语言（比如：Java、ruby 等）一样，`python` 基本上可以应用在很多方面
+
+## 哪些大厂在用
+
+国外
+
+- YouTube
+- [Instagram](https://www.youtube.com/watch?v=28jA0uP7W6w)
+- Dropbox
+- [Netflix](https://zhuanlan.zhihu.com/p/64624687)
+
+国内
+
+- 豆瓣
+- 饿了么
+- 知乎
+
+这里没有列一些巨大厂（比如：国外的 FLAG, 国内的 BAT），因为对这些巨大厂来讲，语言不会是阻碍其发展的因素，而且其中大部分不以 `python` 为主要语言（比如：Facebook - PHP，Google - Java， Amazon - Java，腾讯和百度 - C/C++，阿里 - Java），列出来的都是以 `python` 作为主要开发语言的公司，`Youtube` 最早就是用 `python` 开发的，不过 `YouTube` 在被 `Google` 收购后，现在已经开始在用 `Go` 重写，`Dropbox`最为 [Guido](https://en.wikipedia.org/wiki/Guido_van_Rossum) 退休公司，现在也在用 `rust`, `Go` 重写部分项目，`Netflix` 也是一个巨大厂级别的公司，从 `Netflix` GitHub 上开源的项目以及技术博客看它使用的大多数语言是：Java、python、Go等，国内豆瓣和知乎是以 `Python` 作为主要开发语言，不过豆瓣也在用 `GO` 重写部分项目，饿了么在被阿里收购前后，就在迁移到 `Java` 上面。
+
 ## Books
 
 python的经典书籍有很多
