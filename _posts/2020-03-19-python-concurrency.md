@@ -135,7 +135,7 @@ if __name__ == "__main__":
 
 这里最大的问题是，与我们将提供的其他解决方案相比，它相对较慢。这是最终输出在我的计算机上给出的示例：
 
-```shell script
+```shell
 $ ./io_non_concurrent.py
    [most output skipped]
 Downloaded 160 in 14.289619207382202 seconds
@@ -456,7 +456,7 @@ if __name__ == "__main__":
 
 最后，在此示例中，它显然比 `asyncio` 和 `threading` 版本慢：
 
-```shell script
+```shell
 $ ./io_mp.py
     [most output skipped]
 Downloaded 160 in 5.718175172805786 seconds
@@ -509,7 +509,7 @@ if __name__ == "__main__":
 
 与受 I/O 约束的示例不同，受 CPU 约束的示例在运行时间上通常相当一致。这在我的机器上大约需要 7.8 秒：
 
-```shell script
+```shell
 $ ./cpu_non_concurrent.py
 Duration 7.834432125091553 seconds
 ```
@@ -526,7 +526,7 @@ Duration 7.834432125091553 seconds
 
 但是，在受 CPU 限制的问题上，无需等待。 CPU 正在尽可能快地启动以解决问题。 在 Python 中，线程和任务都在同一进程中在同一 CPU 上运行。 这意味着一个 CPU 负责完成非并行代码的所有工作以及设置线程或任务的额外工作。 耗时超过 10 秒：
 
-```shell script
+```shell
 $ ./cpu_threading.py
 Duration 10.407078266143799 seconds
 ```
@@ -578,7 +578,7 @@ if __name__ == "__main__":
 
 嘿，这就是我上次讨论 multiprocessing 时所说的。 最大的区别是这次显然是最好的选择。 在我的机器上花费 2.5 秒：
 
-```shell script
+```shell
 $ ./cpu_mp.py
 Duration 2.5175397396087646 seconds
 ```
