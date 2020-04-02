@@ -6,7 +6,7 @@ tags:
 ---
 > 积累技术经验的一个重要的方式就是看各大厂的技术博客，而且这些大厂的博客内容质量一般都非常高。
 
-![tech-blogs](../assets/tech-blogs.jpg)
+![tech-blogs](../assets/images/tech-blogs.jpg)
 
 # Google
 
