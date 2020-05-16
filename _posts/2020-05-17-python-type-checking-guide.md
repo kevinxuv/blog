@@ -6,7 +6,16 @@ tags:
     - type system
     - type checking
 ---
-> Python 作为一种动态语言，在 PEP484（3.5） 才支持 Type Hints，且类型申明是 optional 的，对于从静态语言（比如：Java，国内大学专业cs or se的教学语言也是以 C/C++、Java 为主）转过来的人来讲，变量以及函数的申明没有类型，会让他们很困惑（不知道方法返回什么，IDE 没有提示，不能自动生成代码，不能像 Java 那样点点操作就可以了），要他们理解 duck typing 就更难，因为这些都是动态语言领域的常识，这样的动态特性，也导致了 IDE 无法很好的支持 python type checking，就很难提示错误，对于小白来讲的确是一种困扰，本文翻译至 realpython 上的 [Python Type Checking (Guide)](https://realpython.com/python-type-checking/#duck-types-and-protocols) 这篇文章，为什么不自己写一篇：1. 个人对 python type system 的设计没有很好的掌握 2. 别人写的比我好太多了。 所以我就做一个搬运工吧。注：本文主要通过 Google translate 翻译，手工矫正，如果对翻译质量有问题可以具体指出。
+> Python 作为一种动态语言，在 PEP484（3.5） 才支持 Type Hints，且类型申明是 optional 的，对于从静态语言（比如：Java，国内大学专业cs or se的教学语言也是以 C/C++、Java 为主）转过来的人来讲，变量以及函数的没有申明类型，不在编译阶段做类型检查，会让他们很困惑（不知道方法返回什么，IDE 没有提示，不能自动生成代码等），要他们理解 duck typing 就更难，因为这些都是动态语言领域的常识，这样的动态特性，也导致了 IDE 无法很好的支持 type checking，就很难提示错误，对于小白来讲的确是一种困扰，本文翻译至 realpython 上的 [Python Type Checking (Guide)](https://realpython.com/python-type-checking/#duck-types-and-protocols) 这篇文章。
+>
+>为什么不自己写一篇？：
+>
+> - 个人对 python type system 的设计没有很好的掌握
+> - 别人写的比我好太多了
+>
+> 所以我就做一个搬运工吧。
+>
+> 注：本文主要通过 Google translate 翻译，手工矫正，如果对翻译质量有问题可以具体指出。
 
 在本指南中，您将了解 Python 类型检查。 传统上，类型由 Python 解释器以灵活但隐式的方式处理。 Python 的最新版本允许您指定显式类型提示（type hints），不同的工具可以使用这些提示来帮助您更有效地开发代码。
 
@@ -17,7 +26,7 @@ tags:
 - 执行一个静态代码检查工具
 - 在运行时强制类型
 
-这是一本全面的指南，内容涉及很多领域。 如果您只是想快速了解类型提示（type hints）在 Python 中的工作方式，并查看是否将类型检查包含在代码中，则无需阅读所有内容。 [Hello Types](https://realpython.com/python-type-checking/#hello-types) 和 [Pros and Cons](https://realpython.com/python-type-checking/#pros-and-cons) 这两个部分将带您领略类型检查的工作原理以及有关何时使用的建议。
+这是一本全面的指南，内容涉及很多领域。 如果您只是想快速了解类型提示（type hints）在 Python 中的工作方式，并查看是否将类型检查包含在代码中，则无需阅读所有内容。 **Hello Types** 和 **Pros and Cons** 这两个部分将带您领略类型检查的工作原理以及有关何时使用的建议。
 
 # 类型系统（Type Systems）
 
@@ -68,7 +77,7 @@ String thing;
 thing = "hello";
 ```
 
-第一行声明在编译时将变量名 thing 绑定到 String 类型。 这个名字永远不会反绑到另一种类型。 在第二行中，为事物分配了一个值。 永远不能为它分配一个非 String 对象的值。 例如，如果您稍后要说 thing = 28.1f，则编译器会由于类型不兼容而引发错误(静态类型检查也会提示错误)。
+第一行声明在编译时将变量名 `thing` 绑定到 `String` 类型。 这个名字永远不会反绑到另一种类型。 在第二行中，给 `thing` 分配了一个值。 永远不能为它分配一个非 `String` 对象的值。 例如，如果您稍后要说 `thing = 28.1f`，则编译器会由于类型不兼容而引发错误(静态类型检查也会提示错误)。
 
 Python将始终是[动态类型的语言](https://www.python.org/dev/peps/pep-0484/#non-goals)。 但是，[PEP 484](https://www.python.org/dev/peps/pep-0484/) 引入了类型提示，这使得还可以对 Python 代码进行静态类型检查。
 
@@ -101,8 +110,7 @@ def len(obj):
 
 为了调用 `len(obj)`，对 `obj` 的唯一真正限制是它必须定义 `.__len__()` 方法。否则，对象的类型可以与 `str`，`list`，`dict` 或 `TheHobbit` 一样不同。
 
-使用[结构子类型()](https://en.wikipedia.org/wiki/Structural_type_system) 对 Python 代码进行静态类型检查时，在某种程度上支持鸭子类型。稍后，您将详细了解鸭的分类。
-
+使用[结构子类型](https://en.wikipedia.org/wiki/Structural_type_system) 对 Python 代码进行静态类型检查时，在某种程度上支持鸭子类型。稍后，您将详细了解鸭子类型。
 
 # Hello Types
 
@@ -134,11 +142,11 @@ def headline(text: str, align: bool = True) -> str:
     ...
 ```
 
-`text` 参数：`str` 语法表示 `text` 参数应为 `str` 类型。同样，可选的 `align` 参数应具有默认值为 `True` 的 `bool` 类型。最后，`-> str` 表示法指定 `headline()` 将返回一个字符串。
+`text` 参数：`str` 语法表示 `text` 参数应为 `str` 类型。同样，可选的 `align` 参数应具有默认值为 `True` 的 `bool` 类型。最后，`-> str` 表示指定 `headline()` 将返回一个字符串。
 
 在样式方面，[PEP 8](https://www.python.org/dev/peps/pep-0008/#other-recommendations) 建议以下内容：
 
-- 对冒号使用正常规则，即冒号前没有空格，冒号后没有空格：`text: str`。
+- 对冒号使用正常规则，即冒号前没有空格，冒号后有一个空格：`text: str`。
 - 将参数注解与默认值组合时，请在 `=` 号周围使用空格：`align: bool = True`。
 - 在 `->` 箭头周围使用空格：`def headline（...）-> str`。
 
@@ -150,7 +158,7 @@ Python Type Checking
 --------------------
 ```
 
-> 这似乎可行的原因是字符串 `left` 被[解释成 True](https://realpython.com/python-operators-expressions/#evaluation-of-non-boolean-values-in-boolean-context)。使用  `align = "center"` 不会产生预期的效果，因为 `center` 也是被解释成 `True`。
+> 这似乎可行的原因是字符串 `left` 被[解释成 True](https://realpython.com/python-operators-expressions/#evaluation-of-non-boolean-values-in-boolean-context)。使用  `align = "center"` 不会产生预期的错误效果，因为 `center` 也是被解释成 `True`。
 
 要捕获此类错误，可以使用静态类型检查器。也就是说，该工具可以检查代码的类型，而无需实际运行传统意义上的代码。
 
@@ -160,7 +168,7 @@ Python Type Checking
 
 不过，进行类型检查的最常用工具是 [Mypy](http://mypy-lang.org/)。稍后会给您将简短地讲解下 Mypy，您将了解更多有关 Mypy 的工作原理。
 
-如果您的系统上还没有Mypy，则可以使用pip安装它：
+如果您的系统上还没有 Mypy，则可以使用 pip 安装它：
 
 ```shell
 $ pip install mypy
@@ -190,9 +198,9 @@ headlines.py:10: error: Argument "align" to "headline" has incompatible
                         type "str"; expected "bool"
 ```
 
-根据类型提示，Mypy 可以告诉我们在第10行上使用了错误的类型。
+根据类型提示，Mypy 可以告诉我们在第 10 行上使用了错误的类型。
 
-要解决代码中的问题，您应该更改传入的align参数的值。您还可以将align标志重命名为不太混乱的名称：
+要解决代码中的问题，您应该更改传入的 `align` 参数的值。您还可以将 `align` 标志重命名为不太混乱的名称：
 
 ```python
 # headlines.py
@@ -206,14 +214,14 @@ print(headline("python type checking"))
 print(headline("use mypy", centered=True))
 ```
 
-在这里，您已将 `align` 更改为居中，并在调用 `headline()` 时正确使用了布尔值来居中。现在，代码通过了 Mypy：
+在这里，您已将 `align` 更改为 `centered`，并在调用 `headline()` 时正确使用了布尔值来居中。现在，代码通过了 Mypy：
 
 ```shell
 $ mypy headlines.py
 $ 
 ```
 
-Mypy没有输出意味着没有检测到类型错误。此外，在运行代码时，您将看到预期的输出：
+Mypy 没有输出意味着没有检测到类型错误。此外，在运行代码时，您将看到预期的输出：
 
 ```shell
 $ python headlines.py
@@ -231,17 +239,17 @@ oooooooooooooooooooo Use Mypy oooooooooooooooooooo
 - 输入提示可帮助丰富**你的代码文档**。 传统上，如果要记录函数参数的预期类型，则应使用 [docstrings](https://realpython.com/documenting-python-code/)。 此方法有效，但是由于没有文档字符串标准（尽管有 [PEP 257](https://www.python.org/dev/peps/pep-0257/)，它们不能轻易用于自动检查）。
 - 类型提示可**改善 IDE 和 linter**。 它们使静态推理代码变得容易得多。 反过来，这使 IDE 可以提供更好的代码完成和类似的功能。 通过类型注解，PyCharm 知道文本是字符串，并可以基于此给出具体建议：
 
-![2](https://files.realpython.com/media/pycharm_code_completion.82857c2750f6.png)
+![pycharm_code_completion](https://files.realpython.com/media/pycharm_code_completion.82857c2750f6.png)
 
 - 类型提示可帮助您**构建和维护更简洁的代码架构**。 类型提示的行为迫使您考虑程序中的类型。 尽管 Python 的动态特性是它的一大优势，但是意识到依赖鸭子类型，重载方法或多种返回类型是一件好事。
 
 当然，静态类型检查并非全部都是桃子和奶油。 您还应考虑以下缺点：
 
-- 类型提示需要开发人员花费时间和精力进行添加。即使花费较少的调试时间可能会有所回报，但是您将花费更多的时间输入代码。
-- 类型提示在现代 Python 中效果最好。 注解是在 Python 3.0 中引入的，并且可以在 Python 2.7 中使用类型注解。 尽管如此，诸如变量注解和类型提示的延迟评估等改进仍意味着您将拥有使用 Python 3.6 甚至 Python 3.7 进行类型检查的更好体验。
-- 类型提示会在启动时间上带来一些损失。如果需要使用键入模块，则导入时间可能很长，尤其是在短脚本中。
+- 类型提示**需要开发人员花费时间和精力进行添加**。即使花费较少的调试时间可能会有所回报，但是您将花费更多的时间输入代码。
+- 类型提示在**现代 Python 中效果最好**。 注解是在 Python 3.0 中引入的，并且可以在 Python 2.7 中使用类型注解。 尽管如此，诸如变量注解和类型提示的延迟评估等改进仍意味着您使用 Python 3.6 甚至 Python 3.7 进行类型检查的会有更好的体验。
+- 类型提示**会在启动时间上带来一些损失**。如果需要使用 [typing 模块](https://realpython.com/python-type-checking/#sequences-and-mappings)，则导入时间可能很长，尤其是在短脚本中。
 
-因此，您应该在自己的代码中使用静态类型检查吗？ 好吧，这不是一个全有或全无的问题。 幸运的是，Python 支持渐进式输入的概念。 这意味着您可以逐步将类型引入代码中。 没有类型提示的代码将被静态类型检查器忽略。 因此，您可以开始向关键组件添加类型，并继续添加，只要它能为您增加价值即可。
+因此，您应该在自己的代码中使用静态类型检查吗？ 好吧，这不是一个全有或全无的问题。 幸运的是，Python 支持[渐进式 typing](https://www.python.org/dev/peps/pep-0483/)的概念。 这意味着您可以逐步将类型引入代码中。 没有类型提示的代码将被静态类型检查器忽略。 因此，您可以开始向关键组件添加类型，并继续添加，只要它能为您增加价值即可。
 
 查看上面的利弊清单，您会发现添加类型对您正在运行的程序或程序用户没有影响。 类型检查旨在使您作为开发人员的生活更美好，更便捷。
 
@@ -249,20 +257,20 @@ oooooooooooooooooooo Use Mypy oooooooooooooooooooo
 
 - 如果您刚刚开始学习 Python，则可以放心使用类型提示，直到您有更多经验为止。
 - 在[简短的一次性脚本](https://www.youtube.com/watch?v=Jd8ulMb6_ls)中，类型提示几乎没有任何价值。
-- 在其他人会使用的库中，尤其是在 `PyPI` 上发布的库中，类型提示会增加很多价值。 使用您的库的其他代码需要这些类型提示才能正确进行类型检查。 有关使用类型提示的项目的示例，请参见 [cursive_re](https://github.com/Bogdanp/cursive_re/blob/master/cursive_re/exprs.py)，[black](https://github.com/ambv/black/blob/master/black.py)，我们自己的 [Real Python Reader](https://github.com/realpython/reader/blob/master/reader/feed.py) 和 [Mypy](https://github.com/python/mypy/blob/master/mypy/build.py) 本身。
+- 在其他人会使用的库中，尤其是在 [`PyPI` 上发布的库](https://realpython.com/pypi-publish-python-package/)中，类型提示会增加很多价值。 使用您的库的其他代码需要这些类型提示才能正确进行类型检查。 有关使用类型提示的项目的示例，请参见 [cursive_re](https://github.com/Bogdanp/cursive_re/blob/master/cursive_re/exprs.py)，[black](https://github.com/ambv/black/blob/master/black.py)，我们自己的 [Real Python Reader](https://github.com/realpython/reader/blob/master/reader/feed.py) 和 [Mypy](https://github.com/python/mypy/blob/master/mypy/build.py) 本身。
 - 在较大的项目中，类型提示可帮助您了解类型在代码中的流动方式，因此强烈建议使用。在与他人合作的项目中更是如此。
 
 BernátGábor 在他的出色文章[《Python中的类型提示的状态》](https://www.bernat.tech/the-state-of-type-hints-in-python/) 中建议“只要值得编写单元测试，都应使用类型提示。” 实际上，类型提示在代码中的作用与测试相似：它们可以帮助您作为开发人员编写更好的代码。
 
 希望您现在对Python中类型检查的工作方式以及是否要在自己的项目中使用它有所了解。
 
-在本指南的其余部分，我们将详细介绍 Python 类型系统，包括如何运行静态类型检查器（特别关注Mypy），如何在不带类型提示的库检查代码，以及在运行时使用注解。
+在本指南的其余部分，我们将详细介绍 Python 类型系统，包括如何运行静态类型检查器（特别关注 Mypy），如何在不带类型提示的库检查代码，以及在运行时使用注解。
 
 # 注解（Annotations）
 
 注解是在 [Python 3.0](https://www.python.org/dev/peps/pep-3107/) 中引入的，最初没有任何特定目的。它们只是将任意表达式与函数参数和返回值关联的一种方式。
 
-多年后，[PEP 484](https://www.python.org/dev/peps/pep-0484/) 根据 Jukka Lehtosalo 在其博士学位上所做的工作，定义了如何在您的Python代码中添加类型提示：项目-Mypy。 添加类型提示的主要方法是使用注解。 随着类型检查变得越来越普遍，这也意味着注解应主要保留给类型提示。
+多年后，[PEP 484](https://www.python.org/dev/peps/pep-0484/) 根据 Jukka Lehtosalo 在其博士学位上所做的工作，定义了如何在您的 Python 代码中添加类型提示：项目-Mypy。 添加类型提示的主要方法是使用注解。 随着类型检查变得越来越普遍，这也意味着注解应主要保留给类型提示。
 
 ## 函数注解
 
@@ -293,7 +301,7 @@ def circumference(radius: float) -> float:
 {'radius': <class 'float'>, 'return': <class 'float'>}
 ```
 
-有时，您可能会对 Mypy 如何解释您的类型提示感到困惑。 对于这些情况，有特殊的 Mypy 表达式：`reveal_type()` 和`reveal_locals()`。 您可以在运行 Mypy 之前将它们添加到代码中，然后 Mypy 将尽职地报告其推断出的类型。 举例来说，保存以下代码以 `reveal.py`：
+有时，您可能会对 Mypy 如何解释您的类型提示感到困惑。 对于这些情况，有特殊的 Mypy 表达式：`reveal_type()` 和`reveal_locals()`。 您可以在运行 Mypy 之前将它们添加到代码中，然后 Mypy 将尽职地报告其推断出的类型。 举例来说，保存以下代码到 `reveal.py` 中：
 
 ```python
 # reveal.py
@@ -321,11 +329,11 @@ reveal.py:8: error: radius: builtins.int
 
 > 注意：显示表达式仅作为帮助您添加类型和调试类型提示的工具。 如果您尝试以 Python 脚本的形式运行 reveal.py 文件，它将由于 NameError 崩溃，因为 reveal_type() 不是 Python 解释器已知的函数。
 
-如果 Mypy 提示 `Name 'reveal_locals'is not defined`，则可能需要更新 Mypy 安装。 Mypy 0.610 及更高版本中提供了 reveal_locals() 表达式。
+如果 Mypy 提示 `Name 'reveal_locals'is not defined`，则可能需要更新 Mypy 安装。 Mypy 0.610 及更高版本中提供了 `reveal_locals()` 表达式。
 
 ## 变量注解
 
-在上一节的 circumference() 的定义中，您仅注解了参数和返回值。您没有在函数体内添加任何注解。通常这足够了。
+在上一节的 `circumference()` 的定义中，您仅注解了参数和返回值。您没有在函数体内添加任何注解。通常这足够了。
 
 但是，有时类型检查器在确定变量类型时也需要帮助。变量注解在 [PEP 526](https://www.python.org/dev/peps/pep-0526/) 中定义，并在 Python 3.6 中引入。其语法与函数参数注解的语法相同：
 
@@ -336,7 +344,7 @@ def circumference(radius: float) -> float:
     return 2 * pi * radius
 ```
 
-变量 pi 已使用 float 类型提示进行注解。
+变量 `pi` 已使用 `float` 类型提示进行注解。
 
 > 注意：静态类型检查器不仅仅能够确定 3.142 是浮点数，因此在此示例中，pi 的注解不是必需的。当您了解有关 Python 类型系统的更多信息时，您会看到更多相关的变量注解示例。
 
@@ -361,7 +369,7 @@ NameError: name 'nothing' is not defined
 {'nothing': <class 'str'>}
 ```
 
-由于没有为任何值分配任何值，因此尚未定义名称 nothing。
+由于没有为任何值分配任何值，因此尚未定义名称 `nothing`。
 
 ## 类型注释(Type Comments)
 
@@ -435,11 +443,11 @@ headline.py:10: error: Argument "width" to "headline" has incompatible
 pi = 3.142  # type: float
 ```
 
-在此示例中，将 pi 作为浮点变量进行类型检查。
+在此示例中，将 `pi` 作为浮点变量进行类型检查。
 
-## 那么，选择类型注解（Type Annotaions）或类型注释（Type Comments）呢?
+## 那么，选择类型注解（Type Annotaions）还是类型注释（Type Comments）呢?
 
-在将类型提示添加到自己的代码中时，应该使用注解（annotations）还是键入注释（comments）？简而言之：如果可以，请使用注解（annotations），如果需要，请使用类型注释（comments）。
+在将类型提示添加到自己的代码中时，应该使用注解（annotations）还是类型注释（comments）？简而言之：如果可以，请使用注解（annotations），如果需要，请使用类型注释（comments）。
 
 注解（Annotations） 提供了更简洁的语法，使类型信息更接近您的代码。它们也是书写类型提示的[官方推荐方式](https://www.python.org/dev/peps/pep-0484/)，并且将来会得到进一步开发和适当维护。
 
@@ -509,7 +517,7 @@ P3: ♣2 ♣8 ♠8 ♣J ♢Q ♡9 ♡J ♠4 ♢8 ♢10 ♠9 ♡4 ♠Q
 
 ## 序列和映射（Sequences and Mappings）
 
-让我们在纸牌游戏中添加类型提示。 换句话说，让我们注解一下函数 `create_deck()`，`deal_hands()` 和 `play()`。 第一个挑战是您需要注释复合类型，例如用于表示纸牌的列表和用于表示纸牌本身的元组。
+让我们在纸牌游戏中添加类型提示。 换句话说，让我们注解一下函数 `create_deck()`，`deal_hands()` 和 `play()`。 第一个挑战是您需要注解复合类型，例如用于表示纸牌的列表和用于表示纸牌本身的元组。
 
 使用 str，float 和 bool 等简单类型，添加类型提示与使用类型本身一样容易：
 
@@ -527,9 +535,9 @@ P3: ♣2 ♣8 ♠8 ♣J ♢Q ♡9 ♡J ♠4 ♢8 ♢10 ♠9 ♡4 ♠Q
 >>> options: dict = {"centered": False, "capitalize": True}
 ```
 
-但是，这并不能真正说明全部情况。 name[2]，version[0] 和 option["centered"] 的类型是什么？ 在这种具体情况下，您可以看到它们分别是 str，int 和 bool。 但是，类型提示本身对此不提供任何信息。
+但是，这并不能真正说明全部情况。 `name[2]`，`version[0]` 和 `option["centered"]` 的类型是什么？ 在这种具体情况下，您可以看到它们分别是 str，int 和 bool。 但是，类型提示本身对此不提供任何信息。
 
-相反，您应该使用在键入模块中定义的特殊类型。这些类型添加了用于指定复合类型的元素类型的语法。您可以编写以下内容：
+相反，您应该使用在 typing 模块中定义的特殊类型。这些类型添加了用于指定复合类型的元素类型的语法。您可以编写以下内容：
 
 ```python
 >>> from typing import Dict, List, Tuple
@@ -564,7 +572,7 @@ def create_deck(shuffle: bool = False) -> List[Tuple[str, str]]:
 > 元组是一个不变的序列，通常由固定数量的可能不同类型的元素组成。例如，我们将卡表示为 suit 和 rank 的元组。通常，您将n个元组写入Tuple [t_1, t_2, ..., t_n]。
 > 列表是可变序列，通常由未知数量的相同类型的元素组成，例如卡片列表。无论列表中有多少个元素，注释中都只有一种类型：List [t]。
 
-在许多情况下，您的函数会期望某种[sequence](https://docs.python.org/glossary.html#term-sequence)，而实际上并不关心它是列表还是元组。在这些情况下，在对函数参数进行注释时应使用`type.Sequence`：
+在许多情况下，您的函数会期望某种[sequence](https://docs.python.org/glossary.html#term-sequence)，而实际上并不关心它是列表还是元组。在这些情况下，在对函数参数进行注释时应使用`typing.Sequence`：
 
 ```python
 from typing import List, Sequence
@@ -577,7 +585,7 @@ def square(elems: Sequence[float]) -> List[float]:
 
 ## 类型别名（Type Aliases）
 
-当使用嵌套类型（如纸牌组）时，类型提示可能会变得非常倾斜。您可能需要先凝视 List [Tuple [str, str]]，然后才能确定它与我们对一副纸牌的表示相匹配。
+当使用嵌套类型（如纸牌组）时，类型提示可能会变得非常倾斜。您可能需要先凝视 `List[Tuple [str, str]]`，然后才能确定它与我们对一副纸牌的表示相匹配。
 
 ```python
 def deal_hands(
@@ -594,7 +602,7 @@ def deal_hands(
 
 这太可怕了！
 
-回想一下，类型注解是常规的 Python 表达式。这意味着您可以通过将它们分配给新变量来定义自己的类型别名。例如，您可以创建Card 和 Deck 类型别名：
+回想一下，类型注解是常规的 Python 表达式。这意味着您可以通过将它们分配给新变量来定义自己的类型别名。例如，您可以创建 Card 和 Deck 类型别名：
 
 ```python
 from typing import List, Tuple
@@ -796,7 +804,7 @@ name = choose(names)
 reveal_type(name)
 ```
 
-尽管 Mypy 可以正确推断出名称是字符串列表，但是由于使用 Any 类型，因此在调用 `select()` 之后，该信息会丢失：
+尽管 Mypy 可以正确推断出名称是字符串列表，但是由于使用 `Any` 类型，因此在调用 `select()` 之后，该信息会丢失：
 
 ```python
 $ mypy choose.py
@@ -804,7 +812,7 @@ choose.py:10: error: Revealed type is 'builtins.list[builtins.str*]'
 choose.py:13: error: Revealed type is 'Any'
 ```
 
-您很快就会看到更好的方法。首先，让我们从理论上更深入地了解 Python 类型系统，以及 Any 扮演的特殊角色。
+您很快就会看到更好的方法。首先，让我们从理论上更深入地了解 Python 类型系统，以及 `Any` 扮演的特殊角色。
 
 # 类型理论
 
@@ -814,7 +822,7 @@ choose.py:13: error: Revealed type is 'Any'
 
 一个重要的概念是子类型。正式地说，如果满足以下两个条件，则类型 T 是 U 的子类型：
 
-- 来自T的每个值也属于U类型的值的集合。
+- 来自 T 的每个值也属于 U 类型的值的集合。
 - U 型的每个功能也都属于 T 型的功能。
 
 这两个条件保证即使类型 T 与 U 不同，类型 T 的变量也总是可以假装为 U。
@@ -858,23 +866,23 @@ subtypes 与 subclasses 有些相关。 实际上，所有 subclasses 都对应�
 
 通常，您不需要保持直白的表达。但是，您应该意识到，子类型和复合类型可能不是简单直观的。
 
-## 渐进式输入和一致类型
+## 渐进式 typing 和一致类型
 
-之前我们提到 Python 支持[gradual typing](http://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/)，您可以在其中逐步将类型提示添加到 Python 代码中。本质上，通过 Any 类型可以进行渐变键入。
+之前我们提到 Python 支持 [渐进式 typing](http://wphomes.soic.indiana.edu/jsiek/what-is-gradual-typing/)，您可以在其中逐步将类型提示添加到 Python 代码中。本质上，通过 `Any` 类型可以进行渐进式 typing。
 
-无论如何，Any 都位于子类型的类型层次结构的顶部和底部。 任何类型的行为就好像它是 Any 的子类型，而 Any 行为就好像它是任何其他类型的子类型。 从上面的子类型的定义来看，这实际上是不可能的。 相反，我们谈论下 **consistent types**。
+无论如何，`Any` 都位于子类型的类型层次结构的顶部和底部。 `Any` 类型的行为就好像它是 `Any` 的子类型，而 `Any` 行为就好像它是任何其他类型的子类型。 从上面的子类型的定义来看，这实际上是不可能的。 相反，我们谈论下 **consistent types**。
 
-如果T是U的子类型，或者 T 或 U 是 Any，则类型 T 与类型 U 一致。
+如果 T 是 U 的子类型，或者 T 或 U 是 Any，则类型 T 与类型 U 一致。
 
-类型检查器仅抱怨类型不一致。因此，总的来说，您将永远不会看到Any类型引起的类型错误。
+类型检查器仅抱怨类型不一致。因此，总的来说，您将永远不会看到 `Any` 类型引起的类型错误。
 
-这意味着您可以使用 Any 显式地退回到动态类型，描述太复杂而无法在 Python 类型系统中描述的类型，或描述复合类型的项。 例如，带有字符串键的字典可以采用任何类型，因为其值可以标注 `Dict[str, Any]`。
+这意味着您可以使用 `Any` 显式地退回到动态类型，描述太复杂而无法在 Python 类型系统中描述的类型，或描述复合类型的项。 例如，带有字符串键的字典可以采用任何类型，因为其值可以标注 `Dict[str, Any]`。
 
-不过请记住，如果您使用Any，则静态类型检查器实际上将不会进行任何类型的任何检查。
+不过请记住，如果您使用 `Any`，则静态类型检查器实际上将不会进行任何类型的任何检查。
 
 # 玩转 Python 类型，第2部分
 
-让我们回到实际的例子。回想一下您试图注释一般的 `select()` 函数：
+让我们回到实际的例子。回想一下您试图注解一般的 `select()` 函数：
 
 ```python
 import random
@@ -884,7 +892,7 @@ def choose(items: Sequence[Any]) -> Any:
     return random.choice(items)
 ```
 
-使用 Any 的问题在于，您不必要地丢失了类型信息。您知道，如果将字符串列表传递给 `choice()`，它将返回一个字符串。在下面，您将看到如何使用类型变量来表达这一点，以及如何使用它：
+使用 `Any` 的问题在于，您不必要地丢失了类型信息。您知道，如果将字符串列表传递给 `choice()`，它将返回一个字符串。在下面，您将看到如何使用类型变量来表达这一点，以及如何使用它：
 
 - Duck Types and Protocols
 - 无默认值的参数
@@ -916,7 +924,7 @@ name = choose(names)
 reveal_type(name)
 ```
 
-必须使用 typing 模块中的 TypeVar 定义类型变量。当使用类型变量时，类型变量将覆盖所有可能的类型，并采用最具体的类型。在示例中，名称现在是一个 str：
+必须使用 typing 模块中的 `TypeVar` 定义类型变量。当使用类型变量时，类型变量将覆盖所有可能的类型，并采用最具体的类型。在示例中，名称现在是一个 str：
 
 ```shell
 choose.py:12: error: Revealed type is 'builtins.list[builtins.str*]'
@@ -990,7 +998,7 @@ def choose(items: Sequence[Choosable]) -> Choosable:
     ...
 ```
 
-我们简要提到了 Sequence 既代表列表又代表元组。如前所述，序列可以被认为是鸭子类型，因为它可以是实现了 `.__len__()` 和 `.__getitem__()` 的任何对象。
+我们简要提到了 `Sequence` 既代表列表又代表元组。如前所述，序列可以被认为是鸭子类型，因为它可以是实现了 `.__len__()` 和 `.__getitem__()` 的任何对象。
 
 # Duck Types and Protocols
 
@@ -1288,7 +1296,7 @@ fido.bark()
 pluto.bark()
 ```
 
-虽然码运行没有问题，Mypy将标记问题：
+虽然码运行没有问题，Mypy 将标记问题：
 
 ```shell
 $ mypy dogs.py
@@ -1368,7 +1376,7 @@ Dan: ♢6   Joanna: ♢5   P1: ♢7   GeirArne: ♣4
 
 函数是 Python 中的[一等对象](https://dbader.org/blog/python-first-class-functions)。这意味着您可以将函数用作其他函数的参数。这也意味着您需要能够添加表示函数的类型提示。
 
-函数以及 lambda，方法和类均通过键入 `.Callable` 表示。 通常还表示参数的类型和返回值。 例如，`Callable[[[A1, A2, A3]，Rt]` 表示一个函数，该函数具有三个分别为 A1，A2 和 A3 类型的参数。 该函数的返回类型为 Rt。
+函数以及 lambda，方法和类均通过 `typing.Callable` 表示。 通常还表示参数的类型和返回值。 例如，`Callable[[[A1, A2, A3]，Rt]` 表示一个函数，该函数具有三个分别为 A1，A2 和 A3 类型的参数。 该函数的返回类型为 Rt。
 
 在下面的示例中，函数 `do_twice()` 调用给定函数两次并输出返回值：
 
@@ -1401,8 +1409,10 @@ do_twice(create_greeting, "Jekyll")
 - 领先的一组中玩最高牌的玩家将赢得花样，并在下一轮中成为开始玩家。
 - 除非在较早的技巧中玩过♡，否则玩家无法带领♡。
 - 玩完所有纸牌后，如果玩家持有某些纸牌，则可获得积分：
-    - ♠Q 13分
-    - 每个 ♡ 一分
+
+  - ♠Q 13分
+  - 每个 ♡ 一分
+
 - 一场游戏持续数轮，直到一位玩家获得100分以上。得分最少的玩家获胜。
 
 可以在[网上](https://www.bicyclecards.com/how-to-play/hearts)找到更多详细信息。
@@ -1622,7 +1632,7 @@ Hi Geir Arne, nice to meet you!
 
 请注意，即使我回答 `I am Geir Arne`，该程序也会指出我不是我的名字的一部分。
 
-让我们在程序中添加一个小错误，看看Mypy是否能够帮助我们检测到它。将第16行从 `return result["name"]` 更改为 `return result`。这将返回一个 `parse.Result` 对象，而不是包含名称的字符串。
+让我们在程序中添加一个小错误，看看 Mypy 是否能够帮助我们检测到它。将第 16 行从 `return result["name"]` 更改为 `return result`。这将返回一个 `parse.Result` 对象，而不是包含名称的字符串。
 
 接下来在程序上运行Mypy：
 
@@ -1723,7 +1733,6 @@ Facebook 开发了 [Pyre](https://pyre-check.org/)。其既定目标之一是要
 但是，类型提示可以在运行时在 `__annotations__` 词典中找到，并且可以根据需要使用这些提示进行类型检查。 在开始编写自己的用于执行类型的程序包之前，您应该知道已经有多个程序包为您执行此操作。 请看一些示例的[Enforce](https://pypi.org/project/enforce/)，[Pydantic](https://pypi.org/project/pydantic/) 或 [Pytype](https://pypi.org/project/pytypes/)。
 
 类型提示的另一种用法是将 Python 代码转换为 C 并进行编译以进行优化。 受欢迎的 [Cython 项目](https://cython.org/)使用混合C / Python 语言编写静态类型的 Python 代码。 但是，自版本 0.27 以来，Cython还支持类型注释。 最近，[Mypyc项目](https://github.com/mypyc/mypyc)已经可用。 虽然尚未准备好通用，但它可以将一些带有类型注释的 Python 代码编译为C扩展。
-
 
 # 结论
 
