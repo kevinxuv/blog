@@ -5,6 +5,7 @@ tags:
     - python
     - type system
     - type checking
+    - mypy
 ---
 ![python_type_checking_guide](../assets/images/python_type_checking_guide.png)
 > Python 作为一种动态语言，在 PEP484（3.5） 才支持 Type Hints，且类型申明是 optional 的，对于从静态语言（比如：Java，国内大学专业CS or SE的教学语言也是以 C/C++、Java 为主）转过来的人来讲，变量以及函数的没有申明类型，不在编译阶段做类型检查，会让他们很困惑（不知道方法返回什么，IDE 没有提示，不能自动生成代码等），要他们理解 duck typing 就更难，因为这些都是动态语言领域的常识，这样的动态特性，也导致了 IDE 无法很好的支持 type checking，就很难提示错误，对于小白来讲的确是一种困扰，本文翻译至 realpython 上的 [Python Type Checking (Guide)](https://realpython.com/python-type-checking/#duck-types-and-protocols) 这篇文章。
