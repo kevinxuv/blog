@@ -66,7 +66,7 @@ TypeError: unsupported operand type(s) for +: 'int' and 'str'
 
 `type()` 方法返回对象的类型。这些示例证实了变量的类型可以被允许更改，并且 Python 在更改时正确地推断了该类型。
 
-## 动态类型（Static Typing）
+## 静态类型（Static Typing）
 
 动态类型化的反面是静态类型化。 在不运行程序的情况下执行静态类型检查。 在大多数静态类型的语言中，例如 C 和 Java，这是在编译程序时完成的。
 
@@ -238,7 +238,7 @@ oooooooooooooooooooo Use Mypy oooooooooooooooooooo
 
 上一节向您介绍了 Python 中的类型检查的外观。您还看到了一个向代码添加类型的优点之一的示例：类型提示有助于**捕获某些错误**。其他优点包括：
 
-- 输入提示可帮助丰富**你的代码文档**。 传统上，如果要记录函数参数的预期类型，则应使用 [docstrings](https://realpython.com/documenting-python-code/)。 此方法有效，但是由于没有文档字符串标准（尽管有 [PEP 257](https://www.python.org/dev/peps/pep-0257/)，它们不能轻易用于自动检查）。
+- 类型提示可帮助丰富**你的代码文档**。 传统上，如果要记录函数参数的预期类型，则应使用 [docstrings](https://realpython.com/documenting-python-code/)。 此方法有效，但是由于没有文档字符串标准（尽管有 [PEP 257](https://www.python.org/dev/peps/pep-0257/)，它们不能轻易用于自动检查）。
 - 类型提示可**改善 IDE 和 linter**。 它们使静态推理代码变得容易得多。 反过来，这使 IDE 可以提供更好的代码完成和类似的功能。 通过类型注解，PyCharm 知道文本是字符串，并可以基于此给出具体建议：
 
 ![pycharm_code_completion](https://files.realpython.com/media/pycharm_code_completion.82857c2750f6.png)
@@ -989,7 +989,7 @@ choose.py:14: error: Value of type variable "Choosable" of "choose"
                      cannot be "object"
 ```
 
-还要注意，在第二个示例中，即使输入列表仅包含 int 对象，该类型也被认为是 float 类型。这是因为 Choosable 仅限于字符串和浮点数，而 int 是 float的子类型。
+还要注意，在第二个示例中，即使类型列表仅包含 int 对象，该类型也被认为是 float 类型。这是因为 Choosable 仅限于字符串和浮点数，而 int 是 float的子类型。
 
 在我们的纸牌游戏中，我们希望限制将 `select()` 用于 str 和 Card：
 
@@ -1740,6 +1740,6 @@ Facebook 开发了 [Pyre](https://pyre-check.org/)。其既定目标之一是要
 
 Python 中的类型提示是一项非常有用的功能，您可以愉快地使用它。 类型提示无法使您能够编写任何不使用输入提示就无法编写的代码。 相反，使用类型提示可以使您更轻松地进行代码推理，发现细微的错误并维护干净的体系结构。
 
-在本教程中，您学习了类型提示在 Python 中的工作方式，以及渐进式输入如何使 Python 中的类型检查比许多其他语言更灵活。 您已经了解了使用类型提示的利弊，以及如何使用注解或类型注释将它们添加到代码中。 最终，您了解了 Python 支持的许多不同类型，以及如何执行静态类型检查。
+在本教程中，您学习了类型提示在 Python 中的工作方式，以及渐进式类型如何使 Python 中的类型检查比许多其他语言更灵活。 您已经了解了使用类型提示的利弊，以及如何使用注解或类型注释将它们添加到代码中。 最终，您了解了 Python 支持的许多不同类型，以及如何执行静态类型检查。
 
 有很多资源可以了解有关 Python 中静态类型检查的更多信息。 [PEP 483](https://www.python.org/dev/peps/pep-0483/) 和 [PEP 484](https://www.python.org/dev/peps/pep-0484/) 提供了许多有关如何在 Python 中实现类型检查的背景知识。 [Mypy 文档](https://mypy.readthedocs.io/)有一个很好的[参考部分](https://mypy.readthedocs.io/en/stable/builtin_types.html)，详细介绍了所有可用的类型。
