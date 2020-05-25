@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Python Bindings: Calling C or C++ From Python
+title: Python Bindings - Calling C or C++ From Python
 tags: 
     - python
     - python bindings
