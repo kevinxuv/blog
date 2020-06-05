@@ -25,7 +25,7 @@ Representational state transfer (REST) 是定义了一系列约束用来构建 [
 
 而它的局限也是很明显，从它定义的约束，就可以看出，它更适合用来开发资源型接口，但是假如你提供的接口是 `action` 类接口，它只是一个触发接口，并没有涉及到资源的处理，或者它可能涉及到不同资源的处理，这时候它就不满足你的需求了，对于这类接口，其实并不一定要在 rest 的框框里面实现，不要尝试去破坏 rest 的设计，而是单独实现，作为 rest 的补充和扩展，来满足你的需求。
 
-如果要用 python 实现一个 rest 风格的接口应该怎么做呢？首先我们应该想到需要用 python 流行的网关协议 [wsgi](https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface) 去处理网络请求，然后根据 rest 定义的约束用接口来实现，而 [Flask](https://flask.palletsprojects.com/en/1.1.x/)  作为实现了 wsgi 协议的流行框架，自然而然就成了一个好的选择。
+如果要用 python 实现一个 rest 风格的接口应该怎么做呢？首先我们应该想到需要用 python 流行的网关协议 [wsgi](https://en.wikipedia.org/wiki/Web_Server_Gateway_Interface) 去处理网络请求，然后根据 rest 定义的约束用接口来实现，而 [Flask](https://flask.palletsprojects.com/en/1.1.x/)  作为实现了 `wsgi` 协议的流行框架，自然而然就成了一个好的选择。
 
 # Flask Rest API 实现
 
@@ -33,16 +33,19 @@ Representational state transfer (REST) 是定义了一系列约束用来构建 [
 
 ![rest-constraints](../assets/images/rest-constraints.jpg)
 
-其中 `PATCH` 方法可以不用实现，因为它跟 `PUT` 实现的功能有重叠，也就是说我们的接口要实现 `GET`, `POST`, `PUT`, `DELETE` 方法定义的功能，而 flask view 模块就提供了 [MethodView](https://flask.palletsprojects.com/en/1.1.x/views/#method-views-for-apis)，我们可以基于 MethodView 实现 API 层 rest 定义的约束：
+其中 `PATCH` 方法可以不用实现，因为它跟 `PUT` 实现的功能有重叠，也就是说我们的接口要实现 `GET`, `POST`, `PUT`, `DELETE` 方法定义的功能，而 flask view 模块就提供了 [MethodView](https://flask.palletsprojects.com/en/1.1.x/views/#method-views-for-apis)，我们可以基于 `MethodView` 实现 API 层 rest 定义的约束：
 
 ```python
 from flask import Flask
 from flask.views import MethodView
 
 class ResourceView(MethodView):
-    path = ''
 
-    def get(self, id):
+    def __init__(self, resource, path):
+        self.resource = resource  # 这个 view 对应的资源
+        self.path = path  # 这个 view 对应的路由的 path
+
+    def get(self, id=None):
         raise NotImplementedError
 
     def post(self):
@@ -55,7 +58,7 @@ class ResourceView(MethodView):
         raise NotImplementedError
 ```
 
-如 flask 文档里面提到的，还需要一个方法去注册路由：
+如 `flask` 文档里面提到的，还需要一个方法去注册路由：
 
 ```python
 def register_restapi(app: Flask):
@@ -76,7 +79,7 @@ def register_restapi(app: Flask):
         methods=['GET', 'DELETE', 'PUT'])
 ```
 
-`ResourceView` 只是定义了一些抽象方法，我们现在讨论下实现，rest 定义的接口是对一个资源进行操作，所以我们需要定义一个 `Resource` 模型， 并且它应该具有约束中要求的功能实现:
+上面 `ResourceView` 只是定义了一些抽象方法，我们现在讨论下具体实现，rest 定义的接口是对一个资源进行操作，所以我们需要定义一个 `Resource` 模型， 并且它应该具有约束中要求的功能实现:
 
 ```python
 from typing import List
@@ -257,7 +260,7 @@ class PeeweeResource(Resource, Model):
             Model.delete_by_id(pk)
 ```
 
-这样看起来只需要实现 `Resource`， 就可以开出 rest api，这时候可以这样做：
+这样看起来只需要实现 `Resource`， 就可以开出 `rest api`，这时候可以这样做：
 
 ```python
 def get_all_resource_views():
@@ -270,8 +273,8 @@ def get_all_resource_views():
     resource_views = {}
     for resource in resources:
         resource_name = resource.__name__.lower()
-        resource_view = ResourceView.as_view('{}_api'.format(resource_name), resource)
-        resource_views['/{}s'.format(resource_name)] = resource_view
+        resource_view = ResourceView.as_view(f'{resource_name}_api', resource)
+        resource_views[f'/{resource_name}s'] = resource_view
     return resource_views
 ```
 
@@ -296,13 +299,13 @@ def register_restapi(app: Flask):
             methods=['GET', 'DELETE', 'PUT'])
 ```
 
-这样，在 flask 实例化的时候调用这个方法注册一遍路由即可实现将所有的 `Resource` 实现restapi 接口。
+这样，在 `flask` 实例化的时候调用这个方法注册一遍路由即可实现将所有的 `Resource` 实现 restapi 接口。
 
 # 总结
 
 从上面可以看出，rest api 的设计，需要2个模型：
 
-- `Resource`，需要通过 rest api 暴露出去的资源（可以是数据、缓存、开关等），并实现 rest 约束需要的接口。
+- `Resource`，需要通过 rest api 暴露出去的资源（可以是持久化数据、缓存、开关等），并实现 rest 约束需要的接口。
 - `ResourceView`，在 http 网关协议层根据 http method 处理 http 请求，实现 rest 定义的约束。
 
 至于在 http 网关协议层用什么 web framework 去处理 http 请求，可以根据自己的项目实际使用到的 web framework 去实现，这样就可以对外暴露出 rest api（或者称为 web service），给外部系统或者端调用，本文作为 flask 实战，自然而然选择了 flask 举例。
