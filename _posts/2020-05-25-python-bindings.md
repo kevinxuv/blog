@@ -2,44 +2,44 @@
 layout: post
 title: Python Bindings - Calling C or C++ From Python
 tags: 
-    - python
-    - python bindings
+    - Python
+    - Python bindings
     - ctypes
     - CFFI
     - Cython
     - PyBind11
 ---
-![image](../assets/images/python-bindings.png)
-> python 最被人诟病的问题是什么？ 慢，这是被人诟病最多的问题，很少人知道具体原因，极少人愿意去深入了解并找到原因，更极少的人愿意付出时间去解决这个问题，很多人都是停留在抱怨吐槽阶段，知乎上有几个问题是跟这个问题相关的，里面有些答案很专业，很早以前我也去找寻过答案，总结下来：
+![image](../assets/images/Python-bindings.png)
+> Python 最被人诟病的问题是什么？ 慢，这是被人诟病最多的问题，很少人知道具体原因，极少人愿意去深入了解并找到原因，更极少的人愿意付出时间去解决这个问题，很多人都是停留在抱怨吐槽阶段，知乎上有几个问题是跟这个问题相关的，里面有些答案很专业，很早以前我也去找寻过答案，总结下来：
 >
-> - 动态特性导致解释器低效（python是非常动态的语言，为了支持这些动态特性，付出的是解释器的低效）
-> - 解释器（或者称 python VM）在 GC 方面的低效
+> - 动态特性导致解释器低效（python是非常动态的语言，为了支持这些动态特性，付出的代价是解释器的低效）
+> - 解释器（或者称 Python VM）在 GC 方面的低效
 > - 由于 [GIL](https://en.wikipedia.org/wiki/Global_interpreter_lock) 的存在，无法更好的支持 CPU 密集型的计算场景
 > - 没有 JIT 和更好的 VM，这是相对其它语言来讲，比如：Java
 >
-> 所以也就可以围绕这几个方面来找到解决方案提升 python 程序的执行速度，还是有些人愿意贡献自己的时间从这些方面去提升 python 的性能，比如 GIL 的问题，我看到 [pycon 2019](https://www.youtube.com/watch?v=7RlqbHCCVyc) 这位小伙就分享了他尝试去解决这个问题。
+> 所以也就可以围绕这几个方面来找到解决方案提升 Python 程序的执行速度，还是有些人愿意贡献自己的时间从这些方面去提升 Python 的性能，比如 GIL 的问题，我看到 [pycon 2019](https://www.youtube.com/watch?v=7RlqbHCCVyc) 这位小伙就分享了他尝试去解决这个问题。
 >
-> 这篇文章是翻译自 `realpython` 上题为 [Python Bindings: Calling C or C++ From Python]((https://realpython.com/python-bindings-overview/)) 的文章，怎么绕开 GIL 的限制，怎么避免解释器的低效，python bindings 是一个方案，也是最常用的方案。
+> 这篇文章是翻译自 `realpython` 上题为 [Python Bindings: Calling C or C++ From Python]((https://realpython.com/Python-bindings-overview/)) 的文章，怎么绕开 GIL 的限制，怎么避免解释器的低效，`Python bindings` 是一个方案，也是最常用的方案。
 
-您是要从 Python 使用 C 或 C++ 库的 Python 开发人员吗？ 如果是这样，则 Python bindings 允许您调用函数并将数据从 Python 传递到 C 或 C++，从而使您能够充分利用这两种语言的优势。 在本教程中，您会看到一些可用于创建 Python bindings 的工具的概述。
+您是要从 Python 使用 C 或 C++ 库的 Python 开发人员吗？ 如果是这样，`Python bindings` 允许您调用函数并将数据从 Python 传递到 C 或 C++，从而使您能够充分利用这两种语言的优势。 在本教程中，您会看到一些可用于创建 `Python bindings` 的工具的概述。
 
 在本教程中，您将了解：
 
 - 为什么要从 Python **调用 C 或 C++**
 - 如何在 C 和 Python 之间**传递数据**
-- 哪些**工具和方法**可以帮助您创建 Python 绑定
+- 哪些**工具和方法**可以帮助您创建 `Python bindings`
 
-本教程针对中级 Python 开发人员。 它假定您具有 Python 的基础知识，并且对 C 或 C++ 中的函数和数据类型有所了解。 点击[链接](https://realpython.com/bonus/python-bindings-code/)，您可以获得本教程中将看到的所有示例代码。
+本教程针对中级 Python 开发人员。 它假定您具有 Python 的基础知识，并且对 C 或 C++ 中的函数和数据类型有所了解。 点击[链接](https://realpython.com/bonus/Python-bindings-code/)您可以获得本教程中的所有示例代码。
 
-让我们深入研究 Python bindings！
+让我们深入研究 `Python bindings`！
 
 # Python Bindings 概述
 
-在深入研究如何从 Python 调用 C 之前，最好花点时间了解为什么。 在几种情况下，创建 Python 绑定来调用 C 库是一个好主意：
+在深入研究如何从 Python 调用 C 之前，最好花点时间了解为什么。 在以下几种情况下，创建 Python 绑定来调用 C 库是一个好主意：
 
 1. 您已经拥有一个大型的，经过测试的，稳定的，用 C++ 编写的库，并且希望在 Python 中加以利用。 这可以是通信库，也可以是与特定硬件对话的库。 它的作用并不重要。
 2. 您想通过将关键部分转换为 C 来加快 Python 代码的特定部分的速度。C 不仅执行速度更快，而且还允许您在小心的情况下摆脱 GIL 的限制。
-3. 您想使用Python测试工具对其系统进行大规模测试。
+3. 您想使用 Python 测试工具对其系统进行大规模测试。
 
 以上所有都是学习创建 Python 绑定 C 库接口的重要原因。
 
@@ -59,17 +59,17 @@ tags:
 
 其他数据类型在两种语言之间具有相似的关系。 让我们依次来看一下：
 
-- [整数](https://realpython.com/python-data-types/#integers)存储计数数字。 Python 以[任意精度](https://mortada.net/can-integer-operations-overflow-in-python.html)存储整数，这意味着您可以存储非常非常大的数字。 C 指定整数的具体大小。 在语言之间切换时，您需要注意数据大小，以防止 Python 整数值溢出 C 整数变量。
-- [浮点数](https://realpython.com/python-data-types/#floating-point-numbers)是带小数位的数字。 Python 可以存储比 C 大得多（小得多）的浮点数。这意味着您还必须注意这些值以确保它们在范围内。
-- [复数](https://realpython.com/python-data-types/#complex-numbers)是具有虚部的数字。 尽管 Python 具有内置的复数，而 C 具有复杂的数，但没有内置的方法可在它们之间进行编组。 要编列复数，您需要在 C 代码中构建一个结构或类来对其进行管理。
-- [字符串](https://realpython.com/python-data-types/#strings)是字符序列。 对于这种常见的数据类型，在创建 Python 绑定时，字符串会变得非常棘手。 与其他数据类型一样，Python 和 C 以完全不同的格式存储字符串。 （与其他数据类型不同，C 和 C++ 在这方面也有所不同，这很有趣！）您将研究的每个解决方案在处理字符串方面都有略有不同的方法。
-- [布尔变量](https://realpython.com/python-data-types/#boolean-type-boolean-context-and-truthiness)只能有两个值。由于它们在 C 语言中得到支持，因此将它们编组将非常简单。
+- [整数](https://realpython.com/Python-data-types/#integers)存储计数数字。 Python 以[任意精度](https://mortada.net/can-integer-operations-overflow-in-Python.html)存储整数，这意味着您可以存储非常非常大的数字。 C 指定整数的具体大小。 在语言之间切换时，您需要注意数据大小，以防止 Python 整数值溢出 C 整数变量。
+- [浮点数](https://realpython.com/Python-data-types/#floating-point-numbers)是带小数位的数字。 Python 可以存储比 C 大得多（小得多）的浮点数。这意味着您还必须注意这些值以确保它们在范围内。
+- [复数](https://realpython.com/Python-data-types/#complex-numbers)是具有虚部的数字。 尽管 Python 具有内置的复数，而 C 具有复杂的数，但没有内置的方法可在它们之间进行编组。 要编列复数，您需要在 C 代码中构建一个结构或类来对其进行管理。
+- [字符串](https://realpython.com/Python-data-types/#strings)是字符序列。 对于这种常见的数据类型，在创建 Python 绑定时，字符串会变得非常棘手。 与其他数据类型一样，Python 和 C 以完全不同的格式存储字符串。 （与其他数据类型不同，C 和 C++ 在这方面也有所不同，这很有趣！）您将研究的每个解决方案在处理字符串方面都有略有不同的方法。
+- [布尔变量](https://realpython.com/Python-data-types/#boolean-type-boolean-context-and-truthiness)只能有两个值。由于它们在 C 语言中得到支持，因此将它们编组将非常简单。
 
 除了数据类型转换外，在构建 Python 绑定时还需要考虑其他问题。让我们继续探索它们。
 
 ## 了解可变值和不可变值
 
-除了所有这些数据类型之外，您还必须了解 Python 对象可以是[可变和不可变的](https://realpython.com/courses/immutability-python/)。 在谈论**值传递**或**引用传递**时，C 具有与函数参数类似的概念。 在 C 语言中，所有参数都是传递值。 如果要允许函数在调用方中更改变量，则需要将指针传递给该变量。
+除了所有这些数据类型之外，您还必须了解 Python 对象可以是[可变和不可变的](https://realpython.com/courses/immutability-Python/)。 在谈论**值传递**或**引用传递**时，C 具有与函数参数类似的概念。 在 C 语言中，所有参数都是传递值。 如果要允许函数在调用方中更改变量，则需要将指针传递给该变量。
 
 您可能想知道是否可以通过使用指针简单地将不可变对象传递给 C 来解决不可变限制。 除非您进入丑陋且不可携带的极端，否则 Python 不会为您提供指向对象的指针，因此这是行不通的。 如果您要在 C 语言中修改 Python 对象，则需要采取额外的步骤来实现。 这些步骤将取决于您使用的工具，你后面会看到。
 
@@ -77,11 +77,11 @@ tags:
 
 ## 管理内存
 
-C 和 Python 对内存的管理方式不同。 在 C 语言中，开发人员必须管理所有内存分配，并确保一次只能释放一次。 Python 使用[垃圾收集器](https://realpython.com/python-memory-management/)为您解决此问题。
+C 和 Python 对内存的管理方式不同。 在 C 语言中，开发人员必须管理所有内存分配，并确保一次只能释放一次。 Python 使用[垃圾收集器](https://realpython.com/Python-memory-management/)为您解决此问题。
 
 尽管每种方法都有其优势，但在创建 Python 绑定时确实增加了额外的麻烦。 您需要了解**每个对象的内存分配位置**，并确保仅在语言屏障的同一侧释放内存。
 
-例如，当您设置`x = 3`时，将创建一个 Python 对象。该对象的内存在 Python 端分配，需要进行垃圾回收。 幸运的是，使用 Python 对象，很难做其他任何事情。 看一下 C 语言中的相反情况，您可以在其中直接分配一个内存块：
+例如，当您设置 `x = 3` 时，将创建一个 Python 对象。该对象的内存在 Python 端分配，需要进行垃圾回收。 幸运的是，使用 Python 对象，很难做其他任何事情。 看一下 C 语言中的相反情况，您可以在其中直接分配一个内存块：
 
 ```c++
 int* iPtr = (int*)malloc(sizeof(int));
@@ -93,16 +93,16 @@ int* iPtr = (int*)malloc(sizeof(int));
 
 ## 设置环境
 
-在本教程中，您将使用 Real Python GitHub repo 中[已经存在的 C 和 C++ 库](https://github.com/realpython/materials/tree/master/python-bindings/overview_article)来演示每个工具的测试。 目的是您可以将这些构想用于任何 C 库。 要遵循此处的所有示例，您需要具备以下条件：
+在本教程中，您将使用 Real Python GitHub repo 中[已经存在的 C 和 C++ 库](https://github.com/realpython/materials/tree/master/Python-bindings/overview_article)来演示每个工具的测试。 目的是您可以将这些构想用于任何 C 库。 要遵循此处的所有示例，您需要具备以下条件：
 
 - 已安装 C++ 库并了解命令行调用的路径
 - Python 开发工具：
   
   - 对于Linux，这是 python3-dev 或 python3-devel 软件包，具体取决于您的发行版。
-  - 对于Windows，有[多个选项](https://wiki.python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_10.0_standalone:_Windows_SDK_7.1_.28x86.2C_x64.2C_ia64.29)。
+  - 对于Windows，有[多个选项](https://wiki.Python.org/moin/WindowsCompilers#Microsoft_Visual_C.2B-.2B-_10.0_standalone:_Windows_SDK_7.1_.28x86.2C_x64.2C_ia64.29)。
 
 - Python 3.6或更高版本
-- 一个[虚拟环境](https://realpython.com/courses/working-python-virtual-environments/)（推荐，但不是必需的）
+- 一个[虚拟环境](https://realpython.com/courses/working-Python-virtual-environments/)（推荐，但不是必需的）
 - **invoke** 工具
 
 最后一个可能对您来说是新手，所以让我们仔细看看。
@@ -166,13 +166,13 @@ float cmult(int int_param, float float_param) {
 }
 ```
 
-C 和 C++ 函数几乎完全相同，它们之间的名称和[字符串](https://realpython.com/python-strings/)有所不同。 您可以通过单击[链接](https://realpython.com/bonus/python-bindings-code/)获得所有代码的副本：
+C 和 C++ 函数几乎完全相同，它们之间的名称和[字符串](https://realpython.com/Python-strings/)有所不同。 您可以通过单击[链接](https://realpython.com/bonus/Python-bindings-code/)获得所有代码的副本：
 
 现在，您已经克隆了库并安装了工具，您可以构建和测试工具。因此，让我们深入了解下面的每个部分！
 
 # ctypes
 
-您将从 [ctypes](https://docs.python.org/3.8/library/ctypes.html) 开始，这是标准库中用于创建 Python 绑定的工具。 它提供了一个低级工具集，用于在 Python 和 C 之间加载共享库并编组数据。
+您将从 [ctypes](https://docs.Python.org/3.8/library/ctypes.html) 开始，这是标准库中用于创建 Python 绑定的工具。 它提供了一个低级工具集，用于在 Python 和 C 之间加载共享库并编组数据。
 
 ## 如何安装
 
@@ -190,9 +190,9 @@ ctypes 的一大优点是它是 Python 标准库的一部分。 它是在 Python
 
 ### 加载库
 
-ctypes 提供了几种[加载共享库](https://docs.python.org/3.5/library/ctypes.html#loading-shared-libraries)的方法，其中一些是特定于平台的。 以您的示例为例，您将直接通过完整路径传递所需的共享库来创建 `ctypes.CDLL` 对象：
+ctypes 提供了几种[加载共享库](https://docs.Python.org/3.5/library/ctypes.html#loading-shared-libraries)的方法，其中一些是特定于平台的。 以您的示例为例，您将直接通过完整路径传递所需的共享库来创建 `ctypes.CDLL` 对象：
 
-```python
+```Python
 # ctypes_test.py
 import ctypes
 import pathlib
@@ -222,7 +222,7 @@ float cmult(int int_param, float float_param);
 
 将库加载到 Python 绑定中后，该函数将成为 c_lib 的属性，c_lib 是您之前创建的 CDLL 对象。 您可以尝试这样称呼它：
 
-```python
+```Python
 x, y = 6, 2.3
 answer = c_lib.cmult(x, y)
 ```
@@ -241,7 +241,7 @@ ctypes.ArgumentError: argument 2: <class 'TypeError'>: Don't know how to convert
 
 要解决此问题，您需要根据数字创建一个 c_float。您可以在调用该函数的行中执行以下操作：
 
-```python
+```Python
 # ctypes_test.py
 answer = c_lib.cmult(x, ctypes.c_float(y))
 print(f"    In Python: int: {x} float {y:.1f} return val {answer:.1f}")
@@ -259,7 +259,7 @@ $ invoke test-ctypes
 
 事实证明，与输入参数一样，ctypes 假定您的函数返回一个 int 值。 实际上，您的函数返回一个浮点数，该浮点数被错误地编组。 就像输入参数一样，您需要告诉 ctypes 使用其他类型。 这里的语法略有不同：
 
-```python
+```Python
 # ctypes_test.py
 c_lib.cmult.restype = ctypes.c_float
 answer = c_lib.cmult(x, ctypes.c_float(y))
@@ -310,7 +310,7 @@ $ invoke test-ctypes
 $ python3 -m pip install cffi
 ```
 
-这会将软件包安装到您的虚拟环境中。如果您已经从 requirements.txt 安装了该文件，则应注意这一点。您可以通过访问[链接](https://realpython.com/bonus/python-bindings-code/)中的 repo 来查看requirements.txt：
+这会将软件包安装到您的虚拟环境中。如果您已经从 requirements.txt 安装了该文件，则应注意这一点。您可以通过访问[链接](https://realpython.com/bonus/Python-bindings-code/)中的 repo 来查看requirements.txt：
 
 现在，您已经安装了 CFFI，现在该试一下了！
 
@@ -328,7 +328,7 @@ $ python3 -m pip install cffi
 
 CFFI 提供了一些方法，可以在生成 Python 绑定时读取 **C 头文件**来完成大部分工作。 在 CFFI 文档中，执行此操作的代码放置在单独的 Python 文件中。 在此示例中，您会将代码直接放入使用 Python 文件作为输入的构建工具调用中。 要使用 CFFI，首先创建一个 cffi.FFI 对象，该对象提供了所需的三种方法：
 
-```python
+```Python
 # tasks.py
 import cffi
 ...
@@ -339,7 +339,7 @@ ffi = cffi.FFI()
 
 获得FFI后，您将使用 `.cdef()` 自动处理头文件的内容。这将为您创建包装器方法，用来编组来自 Python 的数据：
 
-```python
+```Python
 # tasks.py
 this_dir = pathlib.Path().absolute()
 h_file_name = this_dir / "cmult.h"
@@ -349,7 +349,7 @@ with open(h_file_name) as h_file:
 
 读取和处理头文件是第一步。之后，您需要使用 `.set_source()` 来描述 CFFI 将生成的源文件：
 
-```python
+```Python
 # tasks.py
 ffi.set_source(
     "cffi_example",
@@ -378,7 +378,7 @@ ffi.set_source(
 
 调用 `.set_source()` 不会建立 Python 绑定。它仅设置元数据来描述将要生成的内容。要构建 Python 绑定，您需要调用 `.compile()`：
 
-```python
+```Python
 # tasks.py
 ffi.compile()
 ```
@@ -401,7 +401,7 @@ $ invoke build-cffi
 
 在完成所有工作之后，您配置并运行了 CFFI 编译器，使用生成的 Python 绑定看起来就像使用任何其他 Python 模块一样：
 
-```python
+```Python
 # cffi_test.py
 import cffi_example
 
@@ -447,7 +447,7 @@ PyBind11 文档的[第一步](https://pybind11.readthedocs.io/en/latest/basics.h
 
 > 注意：PyBind11的大多数示例都使用 [cmake](https://cmake.org/)，这是构建 C 和 C++ 项目的好工具。 但是，对于此演示，您将继续使用调用工具，该工具将遵循文档的[手动构建](https://pybind11.readthedocs.io/en/latest/compiling.html#building-manually)部分中的说明。
 
-您需要将此工具安装到[虚拟环境](https://realpython.com/python-virtual-environments-a-primer/)中：
+您需要将此工具安装到[虚拟环境](https://realpython.com/Python-virtual-environments-a-primer/)中：
 
 ```shell
 $ python3 -m pip install pybind11
@@ -490,13 +490,13 @@ PYBIND11_MODULE(pybind11_example, m) {
 
 既然您已经有了 Python 绑定的代码，请看一下如何将其构建到 Python 模块中。
 
-### 构建 python 绑定
+### 构建 Python 绑定
 
 在 PyBind11 中用于构建 Python 绑定的工具是 C++ 编译器本身。您可能需要修改编译器和操作系统的默认设置。
 
 首先，您必须构建要为其创建绑定的 C++ 库。 例如，您可以将 cppmult 库直接构建到 Python 绑定库中。 但是，对于大多数实际示例，您将拥有一个要包装的预先存在的库，因此您将单独构建 cppmult 库。 该构建是对编译器的一个标准调用，以构建一个共享库：
 
-```python
+```Python
 # tasks.py
 invoke.run(
     "g++ -O3 -Wall -Werror -shared -std=c++11 -fPIC cppmult.cpp "
@@ -515,7 +515,7 @@ $ invoke build-cppmult
 
 另一方面，Python 绑定的构建需要一些特殊的细节：
 
-```python
+```Python
 # tasks.py
 invoke.run(
     "g++ -O3 -Wall -Werror -shared -std=c++11 -fPIC "
@@ -545,7 +545,7 @@ $ python3 -m pybind11 --includes
 
 第 6 行指定源文件的名称，即 `pybind11_wrapper.cpp`。 然后，在第 7 行上，您将看到更多的构建魔术正在发生。 此行指定输出文件的名称。 Python 在模块命名方面有一些特别的想法，包括 Python 版本，机器架构和其他细节。 Python 还提供了一个工具来帮助解决这个问题，称为 `python3.7-config`：
 
-```python
+```Python
 $ python3.7-config --extension-suffix
 .cpython-37m-x86_64-linux-gnu.so
 ```
@@ -570,7 +570,7 @@ $ invoke build-pybind11
 
 与上面的 CFFI 示例类似，完成创建 Python 绑定的繁重工作后，调用函数看起来就像普通的 Python 代码：
 
-```python
+```Python
 # pybind11_test.py
 import pybind11_example
 
@@ -614,13 +614,13 @@ PyBind11 专注于 C++ 而不是 C，这使其不同于 ctypes 和 CFFI。它具
 
 ## 如何安装
 
-Cython 是一个 Python 模块，可以从 [PyPI](https://realpython.com/courses/how-to-publish-your-own-python-package-pypi/) 安装到您的虚拟环境中：
+Cython 是一个 Python 模块，可以从 [PyPI](https://realpython.com/courses/how-to-publish-your-own-Python-package-pypi/) 安装到您的虚拟环境中：
 
-```python
+```Python
 $ python3 -m pip install cython
 ```
 
-同样，如果您已经将 requirements.txt 文件安装到虚拟环境中，则该文件已经存在。您可以通过单击[链接](https://realpython.com/bonus/python-bindings-code/)来获取requirements.txt 的副本。
+同样，如果您已经将 requirements.txt 文件安装到虚拟环境中，则该文件已经存在。您可以通过单击[链接](https://realpython.com/bonus/Python-bindings-code/)来获取requirements.txt 的副本。
 
 那应该已经准备好与 Cython 合作！
 
@@ -632,7 +632,7 @@ $ python3 -m pip install cython
 
 在 Cython 中声明模块的最常见形式是使用 `.pyx` 文件：
 
-```python
+```Python
 # cython_example.pyx
 """ Example cython interface definition """
 
@@ -654,11 +654,11 @@ def pymult( int_param, float_param ):
 
 现在您已经定义了 Python 绑定，是时候构建它们了！
 
-### 构建 python 绑定
+### 构建 Python 绑定
 
 Cython 的构建过程与您用于 PyBind11 的过程相似。您首先在 .pyx 文件上运行 Cython 以生成一个 .cpp 文件。完成此操作后，可以使用与 PyBind11 相同的功能对其进行编译：
 
-```python
+```Python
 # tasks.py
 def compile_python_module(cpp_name, extension_name):
     invoke.run(
@@ -707,7 +707,7 @@ $ invoke build-cython
 
 调用新的 Python 绑定的 Python 代码与用于测试其他模块的代码非常相似：
 
-```python
+```Python
 # cython_test.py
 import cython_example
 
@@ -732,7 +732,7 @@ $ invoke test-cython
 
 ## 长处和短处
 
-Cython 是一个相对复杂的工具，在为 C 或 C++ 创建 Python 绑定时，可以为您提供更深层次的控制。 尽管这里没有详细介绍，但它提供了一种 Python 风格的方法来编写可手动控制 [GIL](https://realpython.com/python-gil/) 的代码，从而可以显着加快某些类型的问题。
+Cython 是一个相对复杂的工具，在为 C 或 C++ 创建 Python 绑定时，可以为您提供更深层次的控制。 尽管这里没有详细介绍，但它提供了一种 Python 风格的方法来编写可手动控制 [GIL](https://realpython.com/Python-gil/) 的代码，从而可以显着加快某些类型的问题。
 
 但是，这种 Python 风格的语言并不完全是 Python，因此，当您逐渐确定 C 和 Python 的哪些部分适合您时，会有一条学习曲线。
 
@@ -742,11 +742,11 @@ Cython 是一个相对复杂的工具，在为 C 或 C++ 创建 Python 绑定时
 
 ## PyBindGen
 
-[PyBindGen](https://pybindgen.readthedocs.io/en/latest/tutorial/#supported-python-versions) 生成用于 C 或 C++ 的 Python 绑定，并用 Python 编写。 它的目标是产生可读的 C 或 C++ 代码，这将简化调试问题。 目前尚不清楚是否最近更新，因为该文档将 Python 3.4 列为最新测试版本。 但是，最近几年每年都有版本发布。
+[PyBindGen](https://pybindgen.readthedocs.io/en/latest/tutorial/#supported-Python-versions) 生成用于 C 或 C++ 的 Python 绑定，并用 Python 编写。 它的目标是产生可读的 C 或 C++ 代码，这将简化调试问题。 目前尚不清楚是否最近更新，因为该文档将 Python 3.4 列为最新测试版本。 但是，最近几年每年都有版本发布。
 
 ## Boost.Python
 
-[Boost.Python](https://www.boost.org/doc/libs/1_66_0/libs/python/doc/html/index.html) 具有类似于您在上面看到的 PyBind11 的接口。 这不是巧合，因为 PyBind11 是基于该库的！ Boost.Python 是用完整的 C++ 编写的，并且在大多数平台上支持大多数（如果不是全部）C++ 版本。 相比之下，PyBind11 仅限于使用现代 C++。
+[Boost.Python](https://www.boost.org/doc/libs/1_66_0/libs/Python/doc/html/index.html) 具有类似于您在上面看到的 PyBind11 的接口。 这不是巧合，因为 PyBind11 是基于该库的！ Boost.Python 是用完整的 C++ 编写的，并且在大多数平台上支持大多数（如果不是全部）C++ 版本。 相比之下，PyBind11 仅限于使用现代 C++。
 
 ## SIP
 
@@ -775,6 +775,6 @@ SIP 是为 PyQt 项目开发的用于生成 Python 绑定的工具集。 wxPytho
 - PyBind11
 - Cython
 
-您现在已经知道，尽管 ctypes 允许您直接加载 DLL 或共享库，但其他三个工具需要额外的步骤，但仍会创建完整的 Python 模块。 另外，您还可以使用 invoke 工具从 Python 侧运行命令行任务。 单击[链接](https://realpython.com/bonus/python-bindings-code/)可以获取在本教程中看到的所有代码。
+您现在已经知道，尽管 ctypes 允许您直接加载 DLL 或共享库，但其他三个工具需要额外的步骤，但仍会创建完整的 Python 模块。 另外，您还可以使用 invoke 工具从 Python 侧运行命令行任务。 单击[链接](https://realpython.com/bonus/Python-bindings-code/)可以获取在本教程中看到的所有代码。
 
 现在选择您喜欢的工具并开始构建这些 Python 绑定吧！特别感谢 Loic Domaigne 对本教程的额外技术评论。
